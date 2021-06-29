@@ -1,0 +1,2529 @@
+{
+  "Uuid": "47aef372-e495-412a-a48f-26e7ae138a83",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Rev.Clouds_Override",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Color": {
+        "Key": "DSCore.Color",
+        "Value": "DSCoreNodes.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 75,
+        "G": 0,
+        "B": 130,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "23675b7443d2430aa85c1b3058c75b9d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "816311c29f9d4d829fb64664082bc90a",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\n\nelementid = IN[0]\n\nrgbcolor = IN[1]\n\n\ndef runit():\n\tif IN[2] == True:\n\t\t#getting all the views required\n\t\tlv = FilteredElementCollector(doc).OfClass(ViewPlan).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\txx = FilteredElementCollector(doc).OfClass(ViewSection).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\tyy = FilteredElementCollector(doc).OfClass(ViewSheet).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\tview = []\n\t\tfor i in lv:\n\t\t\tview.append(i)\n\t\t\n\t\tfor i in xx:\n\t\t\tview.append(i)\n\t\t\t\n\t\tfor i in yy:\n\t\t\tview.append(i)\n\t\t\n\t\tcv = []\n\t\tfor i in rgbcolor: \n\t\t\togs = OverrideGraphicSettings().SetProjectionLineColor(Color(i.Red,i.Green,i.Blue))\n\t\t\tcv.append(ogs)\n\t\t\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\n\t\tfor i in view:\n\t\t\tfor j in range(0,len(elementid)):\n\t\t\t\tfor f in elementid[j]:\n\t\t\t\t\tif f!='nothing':\n\t\t\t\t\t\ti.SetElementOverrides(ElementId(f), cv[j])\n\t\tTransactionManager.Instance.TransactionTaskDone()\n\t\n\telse: cv = \"set bool to true\"\n\treturn cv\nOUT = runit()",
+      "VariableInputPorts": true,
+      "Id": "dd3b45c198c7455eb57edf827358f928",
+      "Inputs": [
+        {
+          "Id": "970e5aef0357432fad11754e4edbc3fd",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4cb95aa3d2894287b8db6e9029adca51",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "501dd48b7058460a96335efb8b99a690",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f05fd3ec89e14807a12527b0ea9ac64b",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "zipped = zip(IN[2],IN[1])\n\n\ndates = IN[0]\n\nz = []\nfor j in range(0,len(dates)): #getting for every date\n\ts = []\n\tb = []\n\t\n\tfor i in range(0,len(IN[2])): #getting for all the lists\n\t\ts.append(dates[j] in zipped[i][0])\n\t\tif s[i] == True: b.append(zipped[i][1].Id)\n\t\telse: b.append('nothing')\n\tz.append(b)\t\n\n\n\n\nOUT = z\n",
+      "VariableInputPorts": true,
+      "Id": "a3a9ea0fcbe244848af8aea6a2f25536",
+      "Inputs": [
+        {
+          "Id": "e7c05f069e0149d1a70c0df638693947",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "85f5236ef41144a4a419462e1775a3a8",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "590ee39b5e90416d963fb35537d38f31",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "743441a5d7454837b41b5433c8787ac3",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n#getting all the views required\r\n#lv = FilteredElementCollector(doc).OfClass(ViewPlan).WhereElementIsNotElementType().ToElements()\r\n\r\n#xx = FilteredElementCollector(doc).OfClass(ViewSection).WhereElementIsNotElementType().ToElements()\r\n\r\n#yy = FilteredElementCollector(doc).OfClass(typeof(IndependentTag)).Cast<IndependentTag>().Where<IndependentTag>(tag => tag.IsMaterialTag == true)\r\n\r\n#yy = FilteredElementCollector(doc).OfClass(IndependentTag)\r\n\r\nyy= FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_RevisionCloudTags).WhereElementIsNotElementType().ToElements()\r\n\r\nOUT = yy\r\n\r\n",
+      "VariableInputPorts": true,
+      "Id": "2c100184ae944cf9942b7e5132bf37d5",
+      "Inputs": [
+        {
+          "Id": "b447075966d943e996bfde27e3dac433",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b084430294e54696a9829d55f9703101",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n#getting all the views required\r\n#lv = FilteredElementCollector(doc).OfClass(ViewPlan).WhereElementIsNotElementType().ToElements()\r\n\r\n#xx = FilteredElementCollector(doc).OfClass(ViewSection).WhereElementIsNotElementType().ToElements()\r\n\r\nyy = FilteredElementCollector(doc).OfClass(RevisionCloud).ToElements()\r\n\r\n\r\nOUT = yy\r\n\r\n",
+      "VariableInputPorts": true,
+      "Id": "24f8a6eb80dd4cf48c469f8c162fdd05",
+      "Inputs": [
+        {
+          "Id": "86bcf3b02a9d4c6ab55d50aaa6dfbe64",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c8bb06931d314c1cbe44fea8ab817066",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nclr.AddReference('RevitAPI')\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\ntags = UnwrapElement(IN[0])\r\ntaggedelements = []\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\nfor i in tags:\r\n\ttagID = doc.GetElement(i.Id)\r\n\ttaggedElem = doc.GetElement(tagID.TaggedLocalElementId)\r\n\ttaggedelements.Add(taggedElem)\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\nOUT = taggedelements",
+      "VariableInputPorts": true,
+      "Id": "9598f8a412074c55a441b561a6a025bb",
+      "Inputs": [
+        {
+          "Id": "9ab15e744f8b4ab2ad7ab5a0f1aad9d7",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4c16eb483b0a405f8ce3f6878c62cd3a",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nclr.AddReference('RevitAPI')\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\ntags = UnwrapElement(IN[0])\r\n#tags2 = UnwrapElement(IN[1])\r\n\r\nf = []\r\nfor i in tags: f.append(i.get_Parameter(BuiltInParameter.REVISION_CLOUD_REVISION_DATE).AsString())\r\n#z = []\r\n#for i in tags2: z.append(i.get_Parameter(BuiltInParameter.REVISION_CLOUD_REVISION_DATE).AsString())\r\n\r\nOUT = f\r\n",
+      "VariableInputPorts": true,
+      "Id": "2acd2a4b97fc4da388ef0c833f1475c3",
+      "Inputs": [
+        {
+          "Id": "40f5ba601f504990b805275a1bd8acea",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e93fae6f092642adaeeddb2bbcaf1653",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nclr.AddReference('RevitAPI')\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\ntags = UnwrapElement(IN[0])\r\n#tags2 = UnwrapElement(IN[1])\r\n\r\nf = []\r\nfor i in tags: f.append(i.get_Parameter(BuiltInParameter.REVISION_CLOUD_REVISION_DATE).AsString())\r\n#z = []\r\n#for i in tags2: z.append(i.get_Parameter(BuiltInParameter.REVISION_CLOUD_REVISION_DATE).AsString())\r\n\r\nOUT = f\r\n",
+      "VariableInputPorts": true,
+      "Id": "d397f15a2bd0494bb3ec17b6782780d9",
+      "Inputs": [
+        {
+          "Id": "7b5d58340eee4872a676716a74568af8",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7593ba8f284e471e976e5d1e66724532",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 255,
+        "G": 140,
+        "B": 0,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "517c0e30a29042a2a8df8cc9f325509d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f5ca84b5cbdf4378bd4fcf86916285d9",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 47,
+        "G": 79,
+        "B": 79,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "696b844057fa4fcfafa69d570cc51703",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c2ec3c73a95249c5b6b9e95dc895ad2f",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 0,
+        "G": 0,
+        "B": 205,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "429ea1a194614c47b1fc6952e91e1d0f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f3f8ad8a73ea4799be91f869c9f874d3",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 255,
+        "G": 20,
+        "B": 147,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "0f9ce6e8c01a47439f3c9a36815fae46",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ba7f6877990444aba4d3428d69e63fdd",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 160,
+        "G": 82,
+        "B": 45,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "3d18728245d74b55b8678df4eca31aab",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6343cebbd40b42ceb2765baa3ed4fa6e",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 220,
+        "G": 20,
+        "B": 60,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "cc680ee7d5e148869f74d2e66af040e8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c45f60e962c743e3a8e8f2ebfee72652",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.CreateList, CoreNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "48ca9d1f638343fa840fd8be3a3ff821",
+      "Inputs": [
+        {
+          "Id": "7be92b2f232642ae82c208ec1b00b5f3",
+          "Name": "item0",
+          "Description": "Item Index #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fb52e74e5a1c4ad58e5d591bbd727fb6",
+          "Name": "item1",
+          "Description": "Item Index #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "65b67649ccf54e959d0a08bcb80d9123",
+          "Name": "item2",
+          "Description": "Item Index #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0e3f6cb4be5a4b3e969f59c8fa220af2",
+          "Name": "item3",
+          "Description": "Item Index #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "91ec370d60b84d9e9c096bb92a4d5afd",
+          "Name": "item4",
+          "Description": "Item Index #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e8734987c3c94610bf2dfad08b02955e",
+          "Name": "item5",
+          "Description": "Item Index #5",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ec5564448baa48b996621db3510a16f2",
+          "Name": "item6",
+          "Description": "Item Index #6",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b54a71ea6be0460b8de9034dd500c962",
+          "Name": "item7",
+          "Description": "Item Index #7",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "aa6c54573a584536ad52330348acb138",
+          "Name": "item8",
+          "Description": "Item Index #8",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "afb4ad9991324a878c2818c700390c13",
+          "Name": "item9",
+          "Description": "Item Index #9",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e5a64bf276284cbab64cadbd89bcfc98",
+          "Name": "item10",
+          "Description": "Item Index #10",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e0a5461bb0014185b306b1d99c9ecec9",
+          "Name": "item11",
+          "Description": "Item Index #11",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5f66e3aa5ae9402baadca3efc97d74f2",
+          "Name": "item12",
+          "Description": "Item Index #12",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3a96bfbb2a0c40d29deca7aaffffea3e",
+          "Name": "item13",
+          "Description": "Item Index #13",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f8c64c3beffd4ae4b9045fd66667df87",
+          "Name": "list",
+          "Description": "A list",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Makes a new list out of the given inputs"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 0,
+        "G": 0,
+        "B": 0,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "d2cf5c74e74544acb9ef813b1712edf1",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "238b6b99e2fc48599735987fe140411a",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 153,
+        "G": 50,
+        "B": 204,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "0c3c0bce56b04cbba6b99d8eff8de49d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8ae998febfe94e79a662b8496af1ab6d",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 50,
+        "G": 205,
+        "B": 50,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "1a2bf69216a64bc7a442d1058cc24ebc",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7a944cc87847422db989043fbe7510e2",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 154,
+        "G": 205,
+        "B": 50,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "80b94c0e54694e6b9adbf7090060ec05",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "f728ea17b1d44131a2aa6133daf76500",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 255,
+        "G": 99,
+        "B": 71,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "2a11c67f99cf4786b579db65f688ce8d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "1125c23f65aa43879fec1da676526a34",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 30,
+        "G": 144,
+        "B": 255,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "8b9256c2a11e474ab075488ece44d58c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c03a9f10b39d4646b0fe4a0804441c68",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 32,
+        "G": 178,
+        "B": 170,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "95a76b34d6b24513a3e8f33ccaba923e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e66e95fad64a4d7cbc3ac3bcb9bb93c1",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"from latest down to oldest\";\n\"red is always latest or remove REVERSE node\";",
+      "Id": "3565488fb082401193b1d630a600ef87",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "268cc070b76a4f7db125c8f82c81430a",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b234a69388894074a2cd247fab246b8d",
+          "Name": "",
+          "Description": "Value of expression at line 2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "bc0e28d18e434a39aff44dec03885428",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "23f3a205071743139670c145e0790345",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "zipped = zip(IN[2],IN[1])\n\n\ndates = IN[0]\n\nz = []\nfor j in range(0,len(dates)): #getting for every date\n\ts = []\n\tb = []\n\t\n\tfor i in range(0,len(IN[2])): #getting for all the lists\n\t\ts.append(dates[j] in zipped[i][0])\n\t\tif s[i] == True: b.append(zipped[i][1].Id)\n\t\telse: b.append('nothing')\n\t\n\tz.append(b)\t\n\n\n\n\nOUT = z",
+      "VariableInputPorts": true,
+      "Id": "ace865a4ceec4608aa98ab3d17024e23",
+      "Inputs": [
+        {
+          "Id": "19e4741f807f4efe9ccdfe2fe9d94445",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f565edffdd05462b9add6f6a9ca298b4",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "43149bcf011a43b2946c5b520fa1a638",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b08b563ad9a64792b5ea637037fa1b12",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\n\nelementid = IN[0]\n\nrgbcolor = IN[1]\n\n\ndef runit():\n\tif IN[2] == True:\n\t\t#getting all the views required\n\t\tlv = FilteredElementCollector(doc).OfClass(ViewPlan).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\txx = FilteredElementCollector(doc).OfClass(ViewSection).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\tyy = FilteredElementCollector(doc).OfClass(ViewSheet).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\tview = []\n\t\tfor i in lv:\n\t\t\tview.append(i)\n\t\t\n\t\tfor i in xx:\n\t\t\tview.append(i)\n\t\t\t\n\t\tfor i in yy:\n\t\t\tview.append(i)\n\t\t\n\t\tcv = []\n\t\tfor i in rgbcolor: \n\t\t\togs = OverrideGraphicSettings().SetProjectionLineColor(Color(i.Red,i.Green,i.Blue))\n\t\t\tcv.append(ogs)\n\t\t\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\n\t\tfor i in view:\n\t\t\tfor j in range(0,len(elementid)):\n\t\t\t\tfor f in elementid[j]:\n\t\t\t\t\tif f!='nothing':\n\t\t\t\t\t\ti.SetElementOverrides(ElementId(f), cv[j])\n\t\t\t\t\t\n\t\tTransactionManager.Instance.TransactionTaskDone()\n\t\n\telse: cv = \"set bool to true\"\n\treturn cv\nOUT = runit()",
+      "VariableInputPorts": true,
+      "Id": "2c8a4a0b5ee9485fb47ec46a2aa3a5de",
+      "Inputs": [
+        {
+          "Id": "1419352da96d410cb5e32010e0acd37b",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4cdd101dcf8a4e328bab188676f47182",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6863a5de41644b10b17387a833e928a6",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "299d286bb6a74e0bbb5f2c52613a512e",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Reverse@var[]..[]",
+      "Id": "de4deb65bf124d1090c9b5a379922c06",
+      "Inputs": [
+        {
+          "Id": "c7276b0a0b7e473cb9b4a957d6594f61",
+          "Name": "list",
+          "Description": "List to be reversed.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "3d26756b541141bdbff6020f4dc678ae",
+          "Name": "list",
+          "Description": "New list.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Creates a new list containing the items of the given list but in reverse order.\n\nList.Reverse (list: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\r\nk = list(set(IN[0]))\r\ny = []\r\n\r\nfor i in k:\r\n\tif len(i)<2: #check empty and make it first\r\n\t\tx = \"999999999\"\r\n\t\ty.append(x)\t\r\n\telse:\r\n\t\tif (i)[:4] == \"Date\": #check Date 9 default names and sent them on top\r\n\t\t\tx = \"999999\"+i[len(i)-2:]\r\n\t\t\tmm = x.replace(\" \",\"0\")\r\n\t\t\ty.append(mm)\r\n\t\t\t\r\n\t\telse:\r\n\t\t\tif len(i)<=9: #check for 2020 year instead of just 20\r\n\t\t\t\tx = \"20\"+i[6:8]+i[3:5]+i[0:2]\r\n\t\t\t\ty.append(x)\r\n\t\t\telse:\r\n\t\t\t\tif len(i)<11:\r\n\t\t\t\t\tx = i[6:10]+i[3:5]+i[0:2]\r\n\t\t\t\t\ty.append(x)\t\r\n\r\nc = zip(y, k)\r\n\r\nf = sorted(c)\r\n#strange way to get second element from every sublist\r\n#sorted_elements =  [element for _, element in f]\r\nss = []\r\nfor i in range(0, len(f)-1):\r\n\tif f[i][0][:1] == \"9\":  #check for first 9\r\n\t\tss.append(f[i][1])\r\n\telif f[i][0] == f[i+1][0]: #check for double\r\n\t\tss.append(f[i][1])\r\n\t\t\r\nif f[len(f)-1][0][:1]==\"9\": ss.append(f[len(f)-1][1])\r\n\r\n\r\n#we can filter all Data9 \r\nxm = []\r\nfor i in ss:\r\n\tif i[:4]!=\"Date\":xm.append(i)\r\n\r\n\r\n\r\nOUT = xm\r\n\r\n",
+      "VariableInputPorts": true,
+      "Id": "57522521f64f4fd487039f4ea92e5f77",
+      "Inputs": [
+        {
+          "Id": "e21b5894431f4367924968cc2161baf5",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "36e46552e1864c548c1540fd87c2c443",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\n\nelementid = IN[0]\n\nrgbcolor = IN[1]\n\n\ndef runit():\n\tif IN[2] == True:\n\t\t#getting all the views required\n\t\tlv = FilteredElementCollector(doc).OfClass(ViewPlan).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\txx = FilteredElementCollector(doc).OfClass(ViewSection).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\tyy = FilteredElementCollector(doc).OfClass(ViewSheet).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\tview = []\n\t\tfor i in lv:\n\t\t\tview.append(i)\n\t\t\n\t\tfor i in xx:\n\t\t\tview.append(i)\n\t\t\t\n\t\tfor i in yy:\n\t\t\tview.append(i)\n\t\t\n\t\tcv = []\n\t\tfor i in rgbcolor: \n\t\t\togs = OverrideGraphicSettings().SetProjectionLineColor(Color(i.Red,i.Green,i.Blue))\n\t\t\tcv.append(ogs)\n\t\t\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\n\t\tfor i in view:\n\t\t\tfor j in range(0,len(elementid)):\n\t\t\t\tfor f in elementid[j]:\n\t\t\t\t\tif f!='nothing':\n\t\t\t\t\t\ti.SetElementOverrides(ElementId(f), cv[j])\n\t\tTransactionManager.Instance.TransactionTaskDone()\n\t\n\telse: cv = \"set bool to true\"\n\treturn cv\nOUT = runit()",
+      "VariableInputPorts": true,
+      "Id": "83d92b182dfc43198953367317a86838",
+      "Inputs": [
+        {
+          "Id": "b404ae72912e4ed9bd6f7f03dc6e4606",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "19e04d6fc6bb4edfaf0b39bf3fedc00b",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "582043ef255e4ae49a634f47aaf17d69",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d2dcfca96a3340278f4cafe1acf8a96f",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\nclr.AddReference('RevitAPI')\nfrom Autodesk.Revit.DB import *\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\n\nelementid = IN[0]\n\nrgbcolor = IN[1]\n\n\ndef runit():\n\tif IN[2] == True:\n\t\t#getting all the views required\n\t\tlv = FilteredElementCollector(doc).OfClass(ViewPlan).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\txx = FilteredElementCollector(doc).OfClass(ViewSection).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\tyy = FilteredElementCollector(doc).OfClass(ViewSheet).WhereElementIsNotElementType().ToElements()\n\t\t\n\t\tview = []\n\t\tfor i in lv:\n\t\t\tview.append(i)\n\t\t\n\t\tfor i in xx:\n\t\t\tview.append(i)\n\t\t\t\n\t\tfor i in yy:\n\t\t\tview.append(i)\n\t\t\n\t\tcv = []\n\t\tfor i in rgbcolor: \n\t\t\togs = OverrideGraphicSettings().SetProjectionLineColor(Color(i.Red,i.Green,i.Blue))\n\t\t\tcv.append(ogs)\n\t\t\n\t\tTransactionManager.Instance.EnsureInTransaction(doc)\n\t\tfor i in view:\n\t\t\tfor j in range(0,len(elementid)):\n\t\t\t\tfor f in elementid[j]:\n\t\t\t\t\tif f!='nothing':\n\t\t\t\t\t\ti.SetElementOverrides(ElementId(f), cv[j])\n\t\t\t\t\t\n\t\tTransactionManager.Instance.TransactionTaskDone()\n\t\n\telse: cv = \"set bool to true\"\n\treturn cv\nOUT = runit()",
+      "VariableInputPorts": true,
+      "Id": "1c69a2126f444f8087af2ec790d601c5",
+      "Inputs": [
+        {
+          "Id": "6503820c904a43a8a4b525676dccb651",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e6bac533debc438c9969dc8250be67ab",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e196641371ed4a4195d1e2d040086b3c",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a3c461ea06f04a3d9593b659af7051b6",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "zipped = zip(IN[2],IN[1])\n\n\ndates = IN[0]\n\nz = []\nfor j in range(0,len(dates)): #getting for every date\n\ts = []\n\tb = []\n\t\n\tfor i in range(0,len(IN[2])): #getting for all the lists\n\t\ts.append(dates[j] in zipped[i][0])\n\t\tif s[i] == True: b.append(zipped[i][1].Id)\n\t\telse: b.append('nothing')\n\t\n\tz.append(b)\t\n\n\n\n\nOUT = z",
+      "VariableInputPorts": true,
+      "Id": "c0270e4750e8455887aa05ad50c44614",
+      "Inputs": [
+        {
+          "Id": "1f6487399f834fc9892bd827bcef38cf",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "76d2ca8f39a242db9ddfbeb53f38bcba",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "431c624f27da4808b3223a7a330e129d",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b03c1caffaee4e10b6595fba154bab7b",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "d7d8db7c9d9c4f73b71598178c999ef0",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c8788f18887f4e1681d2cdddf9a2d285",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "zipped = zip(IN[2],IN[1])\n\n\ndates = IN[0]\n\nz = []\nfor j in range(0,len(dates)): #getting for every date\n\ts = []\n\tb = []\n\t\n\tfor i in range(0,len(IN[2])): #getting for all the lists\n\t\ts.append(dates[j] in zipped[i][0])\n\t\tif s[i] == True: b.append(zipped[i][1].Id)\n\t\telse: b.append('nothing')\n\tz.append(b)\t\n\n\n\n\nOUT = z\n",
+      "VariableInputPorts": true,
+      "Id": "622565079c454b29b5953f4cba4f896d",
+      "Inputs": [
+        {
+          "Id": "c26dbb19c00c444a8df76db38d083fb3",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1277caaadbfa4f8ea5073a497a350b7e",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0577baa449e24bf5b74cbb3627079990",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b16439b0071c45c3aec7102395060c0c",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.CreateList, CoreNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "09a50c9a5017438a945f0887d86f10c2",
+      "Inputs": [
+        {
+          "Id": "296a4b67d4df45c58c6f70541f983969",
+          "Name": "item0",
+          "Description": "Item Index #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5807f0d0cd2b4f55989c1fdfb27de04f",
+          "Name": "item1",
+          "Description": "Item Index #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3b4f90cd526d4f07a6af739d2c58bfc7",
+          "Name": "item2",
+          "Description": "Item Index #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "018833308a524be39f14b74f21f9d68a",
+          "Name": "item3",
+          "Description": "Item Index #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "97e671a0715b439aa77bfdb43b9b61bc",
+          "Name": "item4",
+          "Description": "Item Index #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "86610e8175aa42bfb6f726faf83f49a9",
+          "Name": "item5",
+          "Description": "Item Index #5",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d67da50756b4417ca2c63fb43995bf41",
+          "Name": "item6",
+          "Description": "Item Index #6",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6ac0d3d4028e41c994f9e5ba9d12bcce",
+          "Name": "item7",
+          "Description": "Item Index #7",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c5cb1c0b6d87488a95a3dfb780b554d0",
+          "Name": "item8",
+          "Description": "Item Index #8",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "53e47d56078b4c9db294ae8b11582402",
+          "Name": "item9",
+          "Description": "Item Index #9",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3b21f48b9c434fe2bda8036133635323",
+          "Name": "item10",
+          "Description": "Item Index #10",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9b838622a96e4381b8254cc970c65f09",
+          "Name": "item11",
+          "Description": "Item Index #11",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4477eab89cfc4bdaa41217e4e19f0639",
+          "Name": "item12",
+          "Description": "Item Index #12",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a6b5a3a4f1d84177b41a744497f66536",
+          "Name": "item13",
+          "Description": "Item Index #13",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "44ba8822c224493a8ba9fb02b20f4cd5",
+          "Name": "list",
+          "Description": "A list",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Makes a new list out of the given inputs"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 220,
+        "G": 20,
+        "B": 60,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "f622d832e23040aba94595b63553c882",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "053bef5f3a3d4f70a5a9482ae85f02b8",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select a Color from the palette"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "dates = IN[0]\r\ndates_stay = IN[1]\r\n\r\noutt = []\r\ntt = []\r\nm = []\r\nfor i in dates:\r\n\tfor j in dates_stay:\r\n\t\tif i == j: m =True\r\n\tif m != True: outt.append(False)\r\n\telse: outt.append(True)\r\n\r\nOUT = outt",
+      "VariableInputPorts": true,
+      "Id": "bd6d3b7b0afd4bbc9ab239659a4a360f",
+      "Inputs": [
+        {
+          "Id": "f8d2e6aedd2f49e293ddab219f698f7a",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "154b55d09f29442cadce9200c37f4e1d",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9cab8223d03b409bbb24e26eb1e4ed40",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.FilterByBoolMask@var[]..[],var[]..[]",
+      "Id": "7270227e86e6497b8c8c1f028475de7b",
+      "Inputs": [
+        {
+          "Id": "ca3e92b0a70f41eea73a0da5b2ef382e",
+          "Name": "list",
+          "Description": "List to filter.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ed2a2158fb2d48788f54ec4e072eff41",
+          "Name": "mask",
+          "Description": "List of booleans representing a mask.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "690582e067c04d999223841d506e4138",
+          "Name": "in",
+          "Description": "Items whose mask index is true.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9184fd6102b84c1bbe362a75ecd73bc6",
+          "Name": "out",
+          "Description": "Items whose mask index is false.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Filters a sequence by looking up corresponding indices in a separate list of booleans.\n\nList.FilterByBoolMask (list: var[]..[], mask: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.FilterByBoolMask@var[]..[],var[]..[]",
+      "Id": "62ecbb92d14b4d1fa87134a902f70c03",
+      "Inputs": [
+        {
+          "Id": "f51ab2b80ba449c5bf879715b1dc9a34",
+          "Name": "list",
+          "Description": "List to filter.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "354f3a7e7a6a4130bd2474a30fcba624",
+          "Name": "mask",
+          "Description": "List of booleans representing a mask.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "808229ab3c6140b8a0366ddd7f5c4af8",
+          "Name": "in",
+          "Description": "Items whose mask index is true.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7d4626a8e3d44a26b6a245525650b51f",
+          "Name": "out",
+          "Description": "Items whose mask index is false.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Filters a sequence by looking up corresponding indices in a separate list of booleans.\n\nList.FilterByBoolMask (list: var[]..[], mask: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "dates = IN[0]\r\ndates_stay = IN[1]\r\n\r\noutt = []\r\ntt = []\r\nm = []\r\nfor i in dates:\r\n\tfor j in dates_stay:\r\n\t\tif i == j: m =True\r\n\tif m != True: outt.append(False)\r\n\telse: outt.append(True)\r\n\r\nOUT = outt",
+      "VariableInputPorts": true,
+      "Id": "03f9292dc1904c7590f0f2a53c170978",
+      "Inputs": [
+        {
+          "Id": "ae3f11fa6cf14a2f933aca60a83c0941",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "55bbf494a09a4c4bb7a8dd4f400b11ed",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2c6e21eb4b27495190c7bde2525a6877",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nclr.AddReference('RevitAPI')\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\ntags = UnwrapElement(IN[0])\r\n#tags2 = UnwrapElement(IN[1])\r\n\r\nf = []\r\nfor i in tags: f.append(i.get_Parameter(BuiltInParameter.REVISION_CLOUD_REVISION_DATE).AsString())\r\n#z = []\r\n#for i in tags2: z.append(i.get_Parameter(BuiltInParameter.REVISION_CLOUD_REVISION_DATE).AsString())\r\n\r\nOUT = f\r\n",
+      "VariableInputPorts": true,
+      "Id": "9141a4b7e7694fd798512b85f6880c01",
+      "Inputs": [
+        {
+          "Id": "326f4a8122a6453cb132a5630d1f0644",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "dfe35e79ddd94b0e94a426bf7e6bf045",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nclr.AddReference('RevitAPI')\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\ntags = UnwrapElement(IN[0])\r\n#tags2 = UnwrapElement(IN[1])\r\n\r\nf = []\r\nfor i in tags: f.append(i.get_Parameter(BuiltInParameter.REVISION_CLOUD_REVISION_DATE).AsString())\r\n#z = []\r\n#for i in tags2: z.append(i.get_Parameter(BuiltInParameter.REVISION_CLOUD_REVISION_DATE).AsString())\r\n\r\nOUT = f\r\n",
+      "VariableInputPorts": true,
+      "Id": "6815f188174147e08f13ffe6eab0cacf",
+      "Inputs": [
+        {
+          "Id": "77f58bd5986c478fb91aade53d470ada",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "e07a3251ec40422194f364d338fd327f",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\nclr.AddReference('RevitAPI')\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\ntags = UnwrapElement(IN[0])\r\ntaggedelements = []\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\nfor i in tags:\r\n\ttagID = doc.GetElement(i.Id)\r\n\ttaggedElem = doc.GetElement(tagID.TaggedLocalElementId)\r\n\ttaggedelements.Add(taggedElem)\r\n\r\nTransactionManager.Instance.EnsureInTransaction(doc)\r\n\r\nOUT = taggedelements",
+      "VariableInputPorts": true,
+      "Id": "0c23dad010c04cbe8db98069d4e36a7f",
+      "Inputs": [
+        {
+          "Id": "4bbf95c804e54ed7bfc959d8608d75d8",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9306c1eb10234df3a5504d0ab64c3834",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "k = list(set(IN[0]))\r\ny = []\r\n\r\nfor i in k:\r\n\tif len(i)<2: #check empty and make it first\r\n\t\tx = \"999999999\"\r\n\t\ty.append(x)\t\r\n\telse:\r\n\t\tif (i)[:4] == \"Date\": #check Date 9 default names and sent them to back\r\n\t\t\tx = \"00000\"+i[len(i)-2:]\r\n\t\t\tmm = x.replace(\" \",\"0\")\r\n\t\t\ty.append(mm)\r\n\t\t\t\r\n\t\telse:\r\n\t\t\tif len(i)<=9: #check for 2020 year instead of just 20\r\n\t\t\t\tx = \"20\"+i[6:8]+i[3:5]+i[0:2]\r\n\t\t\t\ty.append(x)\r\n\t\t\telse:\r\n\t\t\t\tif len(i)<11:\r\n\t\t\t\t\tx = i[6:10]+i[3:5]+i[0:2]\r\n\t\t\t\t\ty.append(x)\t\r\n\r\n\r\n\r\nc = zip(y, k)\r\n\r\nf = sorted(c)\r\n#strange way to get second element from every sublist\r\n#OUT =  [element for _, element in f]\r\nzz = []\r\n\r\nfor i in range(0, len(k)-1):\r\n\tif f[i][0][:1]==\"9\": #remove all the Date 9 and noname dates\r\n\t\tdo = \"nothing\"\r\n\telse:\t\r\n\t\tif f[i][0]==f[i+1][0]: #remove double name #==f[i+1]\r\n\t\t\tdo = \"nothing\"\r\n\t\telse:\r\n\t\t\tzz.append(f[i][1])\r\n\r\nif f[len(k)-1][0][:1]==\"9\": do = \"nothing\"\r\nelse: zz.append(f[len(k)-1][1])\r\n\r\nOUT = zz\r\n \r\n",
+      "VariableInputPorts": true,
+      "Id": "7927696cf7a240eb80123a973d623d87",
+      "Inputs": [
+        {
+          "Id": "51bd093660ce4edca5475cef62a7ba8a",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "702136ebdae3490c8266b40f5cf88259",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "816311c29f9d4d829fb64664082bc90a",
+      "End": "65b67649ccf54e959d0a08bcb80d9123",
+      "Id": "c1fafd0eadd2421a8d8ebbb9f65dbbbe"
+    },
+    {
+      "Start": "743441a5d7454837b41b5433c8787ac3",
+      "End": "970e5aef0357432fad11754e4edbc3fd",
+      "Id": "7be3dcc6d5674e34a5271b1aecc9e2a7"
+    },
+    {
+      "Start": "b084430294e54696a9829d55f9703101",
+      "End": "9ab15e744f8b4ab2ad7ab5a0f1aad9d7",
+      "Id": "64ae9c67c36147eebb15cfaf1f648b76"
+    },
+    {
+      "Start": "b084430294e54696a9829d55f9703101",
+      "End": "85f5236ef41144a4a419462e1775a3a8",
+      "Id": "1694a228af8441fab54d563091ef0499"
+    },
+    {
+      "Start": "b084430294e54696a9829d55f9703101",
+      "End": "f51ab2b80ba449c5bf879715b1dc9a34",
+      "Id": "35c49107fbfe4d1798bf17992029f72f"
+    },
+    {
+      "Start": "c8bb06931d314c1cbe44fea8ab817066",
+      "End": "7b5d58340eee4872a676716a74568af8",
+      "Id": "c0584cd5b9da4fd786045dd38245d956"
+    },
+    {
+      "Start": "c8bb06931d314c1cbe44fea8ab817066",
+      "End": "f565edffdd05462b9add6f6a9ca298b4",
+      "Id": "3628fa74f7cf483dbf750431a9000ccb"
+    },
+    {
+      "Start": "c8bb06931d314c1cbe44fea8ab817066",
+      "End": "ca3e92b0a70f41eea73a0da5b2ef382e",
+      "Id": "6abe1add9c274d2aa0b199c282198bc3"
+    },
+    {
+      "Start": "4c16eb483b0a405f8ce3f6878c62cd3a",
+      "End": "40f5ba601f504990b805275a1bd8acea",
+      "Id": "9a7bbe054c5543fcb2b95c04da34117b"
+    },
+    {
+      "Start": "e93fae6f092642adaeeddb2bbcaf1653",
+      "End": "590ee39b5e90416d963fb35537d38f31",
+      "Id": "48531825fd114580881a47d6016dd8a6"
+    },
+    {
+      "Start": "e93fae6f092642adaeeddb2bbcaf1653",
+      "End": "ae3f11fa6cf14a2f933aca60a83c0941",
+      "Id": "1b524ae1e4e54bdda2d68e4b672a0656"
+    },
+    {
+      "Start": "7593ba8f284e471e976e5d1e66724532",
+      "End": "43149bcf011a43b2946c5b520fa1a638",
+      "Id": "287b3e638b144f369f94dc9f0bf8277f"
+    },
+    {
+      "Start": "7593ba8f284e471e976e5d1e66724532",
+      "End": "e21b5894431f4367924968cc2161baf5",
+      "Id": "4e0d343036f44f4b96d20f9fc6d48b58"
+    },
+    {
+      "Start": "7593ba8f284e471e976e5d1e66724532",
+      "End": "f8d2e6aedd2f49e293ddab219f698f7a",
+      "Id": "99fd031133b94b11a13be8fa4b43e219"
+    },
+    {
+      "Start": "7593ba8f284e471e976e5d1e66724532",
+      "End": "51bd093660ce4edca5475cef62a7ba8a",
+      "Id": "7b080556e41a4d748b4ff6fb99696668"
+    },
+    {
+      "Start": "f5ca84b5cbdf4378bd4fcf86916285d9",
+      "End": "e8734987c3c94610bf2dfad08b02955e",
+      "Id": "e3e312ef5e0e40409164f50f09e76d4c"
+    },
+    {
+      "Start": "c2ec3c73a95249c5b6b9e95dc895ad2f",
+      "End": "91ec370d60b84d9e9c096bb92a4d5afd",
+      "Id": "55f9650f8621476bbeae2dcfc99c97f4"
+    },
+    {
+      "Start": "f3f8ad8a73ea4799be91f869c9f874d3",
+      "End": "fb52e74e5a1c4ad58e5d591bbd727fb6",
+      "Id": "d5c54adb7ed74a9d879484fad83f98f8"
+    },
+    {
+      "Start": "ba7f6877990444aba4d3428d69e63fdd",
+      "End": "0e3f6cb4be5a4b3e969f59c8fa220af2",
+      "Id": "8b6ed2531d9d4cfd8506f255f954bc4d"
+    },
+    {
+      "Start": "6343cebbd40b42ceb2765baa3ed4fa6e",
+      "End": "ec5564448baa48b996621db3510a16f2",
+      "Id": "dd1415ad141a47a5b3ac14c59a316909"
+    },
+    {
+      "Start": "c45f60e962c743e3a8e8f2ebfee72652",
+      "End": "7be92b2f232642ae82c208ec1b00b5f3",
+      "Id": "b17e9e54375146528eb6e3713f9f274e"
+    },
+    {
+      "Start": "f8c64c3beffd4ae4b9045fd66667df87",
+      "End": "4cdd101dcf8a4e328bab188676f47182",
+      "Id": "2ee5e80c136a4c11875ec60c951136c3"
+    },
+    {
+      "Start": "f8c64c3beffd4ae4b9045fd66667df87",
+      "End": "4cb95aa3d2894287b8db6e9029adca51",
+      "Id": "977a3228d73342fb975f29fcd6fa35f4"
+    },
+    {
+      "Start": "238b6b99e2fc48599735987fe140411a",
+      "End": "e0a5461bb0014185b306b1d99c9ecec9",
+      "Id": "f0af8aae30ae47479fc9b6dcd016c3bf"
+    },
+    {
+      "Start": "8ae998febfe94e79a662b8496af1ab6d",
+      "End": "e5a64bf276284cbab64cadbd89bcfc98",
+      "Id": "dc5ef1ca7c9e44b4810f72f305852009"
+    },
+    {
+      "Start": "7a944cc87847422db989043fbe7510e2",
+      "End": "afb4ad9991324a878c2818c700390c13",
+      "Id": "bb198ae9ec5f4fe399f21aeb8cc2a521"
+    },
+    {
+      "Start": "f728ea17b1d44131a2aa6133daf76500",
+      "End": "aa6c54573a584536ad52330348acb138",
+      "Id": "d33d34add25640ebbe516fb367398a05"
+    },
+    {
+      "Start": "1125c23f65aa43879fec1da676526a34",
+      "End": "b54a71ea6be0460b8de9034dd500c962",
+      "Id": "b5f0e729db2e49919942369e02ce9232"
+    },
+    {
+      "Start": "c03a9f10b39d4646b0fe4a0804441c68",
+      "End": "3a96bfbb2a0c40d29deca7aaffffea3e",
+      "Id": "90a37a028aef4e898755ba115224f19e"
+    },
+    {
+      "Start": "e66e95fad64a4d7cbc3ac3bcb9bb93c1",
+      "End": "5f66e3aa5ae9402baadca3efc97d74f2",
+      "Id": "e18f40417ada4299b2349916ae1dee5b"
+    },
+    {
+      "Start": "23f3a205071743139670c145e0790345",
+      "End": "501dd48b7058460a96335efb8b99a690",
+      "Id": "3a8da684e1604adaa0d78d43b81b4b81"
+    },
+    {
+      "Start": "23f3a205071743139670c145e0790345",
+      "End": "6863a5de41644b10b17387a833e928a6",
+      "Id": "2b4d470ec31440c28dd5a0574c3ddc0d"
+    },
+    {
+      "Start": "b08b563ad9a64792b5ea637037fa1b12",
+      "End": "1419352da96d410cb5e32010e0acd37b",
+      "Id": "0f4cf590d0da482596aaebdbed0dd1a2"
+    },
+    {
+      "Start": "3d26756b541141bdbff6020f4dc678ae",
+      "End": "19e4741f807f4efe9ccdfe2fe9d94445",
+      "Id": "ddb79f00e3eb451fa2933d5dd10461e3"
+    },
+    {
+      "Start": "3d26756b541141bdbff6020f4dc678ae",
+      "End": "e7c05f069e0149d1a70c0df638693947",
+      "Id": "6d14efab60cc483889fba3d221bad369"
+    },
+    {
+      "Start": "36e46552e1864c548c1540fd87c2c443",
+      "End": "154b55d09f29442cadce9200c37f4e1d",
+      "Id": "5a5498217097412d9aa3e85a15e48b69"
+    },
+    {
+      "Start": "36e46552e1864c548c1540fd87c2c443",
+      "End": "55bbf494a09a4c4bb7a8dd4f400b11ed",
+      "Id": "f22c34be4f174458a8d472aa24c3573a"
+    },
+    {
+      "Start": "36e46552e1864c548c1540fd87c2c443",
+      "End": "c26dbb19c00c444a8df76db38d083fb3",
+      "Id": "04004b4b96ac4724ab59c11cf7b30e2a"
+    },
+    {
+      "Start": "36e46552e1864c548c1540fd87c2c443",
+      "End": "1f6487399f834fc9892bd827bcef38cf",
+      "Id": "7fea5f0c078a4ec299b5ee283a2dcce6"
+    },
+    {
+      "Start": "b03c1caffaee4e10b6595fba154bab7b",
+      "End": "6503820c904a43a8a4b525676dccb651",
+      "Id": "c71363db663049bea50425f8ca88264b"
+    },
+    {
+      "Start": "c8788f18887f4e1681d2cdddf9a2d285",
+      "End": "582043ef255e4ae49a634f47aaf17d69",
+      "Id": "c726da571a3c4974998d5257fc3b59b7"
+    },
+    {
+      "Start": "c8788f18887f4e1681d2cdddf9a2d285",
+      "End": "e196641371ed4a4195d1e2d040086b3c",
+      "Id": "66ce465729044951ad93b832870254dc"
+    },
+    {
+      "Start": "b16439b0071c45c3aec7102395060c0c",
+      "End": "b404ae72912e4ed9bd6f7f03dc6e4606",
+      "Id": "525b73a742ee4eeeba1722e101a98974"
+    },
+    {
+      "Start": "44ba8822c224493a8ba9fb02b20f4cd5",
+      "End": "e6bac533debc438c9969dc8250be67ab",
+      "Id": "e24f4e4b294d4d3ba20ad8b8a75b55b3"
+    },
+    {
+      "Start": "44ba8822c224493a8ba9fb02b20f4cd5",
+      "End": "19e04d6fc6bb4edfaf0b39bf3fedc00b",
+      "Id": "fb1a9479d02743e2b1b1831298bca5fe"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "296a4b67d4df45c58c6f70541f983969",
+      "Id": "7fbfa6024332464ca33e4596f25749b4"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "5807f0d0cd2b4f55989c1fdfb27de04f",
+      "Id": "a25035e3e91e41b8b6f1371d3af02a4e"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "3b4f90cd526d4f07a6af739d2c58bfc7",
+      "Id": "21b6216da6564be197bf5798e0da7896"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "018833308a524be39f14b74f21f9d68a",
+      "Id": "51d909b2db08495f893f0e59d9e839ff"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "97e671a0715b439aa77bfdb43b9b61bc",
+      "Id": "8aab8db8ba83415fa76cb424a255a240"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "86610e8175aa42bfb6f726faf83f49a9",
+      "Id": "f324cce9737d4bbf9d89fcebadb14fc6"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "d67da50756b4417ca2c63fb43995bf41",
+      "Id": "aa5d07a7f4db452ab67a84395b158d2f"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "6ac0d3d4028e41c994f9e5ba9d12bcce",
+      "Id": "9584a3aad4e4472dbd4482a33a3d7fa4"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "c5cb1c0b6d87488a95a3dfb780b554d0",
+      "Id": "5533ddef53b94d54b876e4de8c4a68a0"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "53e47d56078b4c9db294ae8b11582402",
+      "Id": "41ac537ca8d841c49645a4104456b45e"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "3b21f48b9c434fe2bda8036133635323",
+      "Id": "ada8b4e2f4a94ea09aa46ea97024570c"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "9b838622a96e4381b8254cc970c65f09",
+      "Id": "27e14879557946f3ae016f1e24c6e8d5"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "4477eab89cfc4bdaa41217e4e19f0639",
+      "Id": "a8c1d157e43b4bc3bca67de0c455120f"
+    },
+    {
+      "Start": "053bef5f3a3d4f70a5a9482ae85f02b8",
+      "End": "a6b5a3a4f1d84177b41a744497f66536",
+      "Id": "476e30d320f94a7bad787272794b9563"
+    },
+    {
+      "Start": "9cab8223d03b409bbb24e26eb1e4ed40",
+      "End": "ed2a2158fb2d48788f54ec4e072eff41",
+      "Id": "a5035d48153f4d459edc051060bb47c9"
+    },
+    {
+      "Start": "690582e067c04d999223841d506e4138",
+      "End": "76d2ca8f39a242db9ddfbeb53f38bcba",
+      "Id": "141d3096900a4d80912c8a61f943b0a7"
+    },
+    {
+      "Start": "690582e067c04d999223841d506e4138",
+      "End": "77f58bd5986c478fb91aade53d470ada",
+      "Id": "0da6e212b3a1442a8de20f50b20dc3d2"
+    },
+    {
+      "Start": "808229ab3c6140b8a0366ddd7f5c4af8",
+      "End": "1277caaadbfa4f8ea5073a497a350b7e",
+      "Id": "671238bcda614533a9964d4e921a5431"
+    },
+    {
+      "Start": "808229ab3c6140b8a0366ddd7f5c4af8",
+      "End": "4bbf95c804e54ed7bfc959d8608d75d8",
+      "Id": "f568c177de0a4d06ae04b84211136ce5"
+    },
+    {
+      "Start": "2c6e21eb4b27495190c7bde2525a6877",
+      "End": "354f3a7e7a6a4130bd2474a30fcba624",
+      "Id": "a102c757644f45cfbfbd7f31edbdde8f"
+    },
+    {
+      "Start": "dfe35e79ddd94b0e94a426bf7e6bf045",
+      "End": "0577baa449e24bf5b74cbb3627079990",
+      "Id": "078ce83d57224472adaa643d20a2626f"
+    },
+    {
+      "Start": "e07a3251ec40422194f364d338fd327f",
+      "End": "431c624f27da4808b3223a7a330e129d",
+      "Id": "ede9e2363ae54b818d435660a504c954"
+    },
+    {
+      "Start": "9306c1eb10234df3a5504d0ab64c3834",
+      "End": "326f4a8122a6453cb132a5630d1f0644",
+      "Id": "58435beeb254405b8b1ce34521dfde18"
+    },
+    {
+      "Start": "702136ebdae3490c8266b40f5cf88259",
+      "End": "c7276b0a0b7e473cb9b4a957d6594f61",
+      "Id": "212f974f3f5c4662b467be02cc221cd1"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "23675b7443d2430aa85c1b3058c75b9d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1321.0334739994657,
+        "Y": 2033.3218753295812
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "View Set Element Overrides",
+        "Id": "dd3b45c198c7455eb57edf827358f928",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -951.71329077664836,
+        "Y": 1347.7345229815751
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "sorting one list by another",
+        "Id": "a3a9ea0fcbe244848af8aea6a2f25536",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1489.1451502040604,
+        "Y": 1405.7176461124952
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get all revision tags",
+        "Id": "2c100184ae944cf9942b7e5132bf37d5",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -2506.0391893063634,
+        "Y": 1556.2738513899187
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get all revisions",
+        "Id": "24f8a6eb80dd4cf48c469f8c162fdd05",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -2282.1994945803353,
+        "Y": 996.55729486942755
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get tagged element",
+        "Id": "9598f8a412074c55a441b561a6a025bb",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -2240.5663871163797,
+        "Y": 1435.1159980132843
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get date",
+        "Id": "2acd2a4b97fc4da388ef0c833f1475c3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1926.4710321596658,
+        "Y": 1491.8638122998927
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get date",
+        "Id": "d397f15a2bd0494bb3ec17b6782780d9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -2159.6630325459591,
+        "Y": 1111.5837128604574
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "517c0e30a29042a2a8df8cc9f325509d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1321.3264350017744,
+        "Y": 2278.8849380713355
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "696b844057fa4fcfafa69d570cc51703",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1321.2332927806331,
+        "Y": 2196.42093213532
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "429ea1a194614c47b1fc6952e91e1d0f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1323.5551425479543,
+        "Y": 1949.4400456708695
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "0f9ce6e8c01a47439f3c9a36815fae46",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1321.731158290854,
+        "Y": 2114.958831160639
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "3d18728245d74b55b8678df4eca31aab",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1317.3000530803702,
+        "Y": 2362.2147536056664
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "cc680ee7d5e148869f74d2e66af040e8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1322.4138179641252,
+        "Y": 1865.8686718617735
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List Create",
+        "Id": "48ca9d1f638343fa840fd8be3a3ff821",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1130.131557662703,
+        "Y": 1876.5266120374993
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "d2cf5c74e74544acb9ef813b1712edf1",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1325.6850823955613,
+        "Y": 2769.9156250532897
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "0c3c0bce56b04cbba6b99d8eff8de49d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1318.5127572686652,
+        "Y": 2690.8438665505219
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "1a2bf69216a64bc7a442d1058cc24ebc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1319.3093410651852,
+        "Y": 2607.9641861126788
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "80b94c0e54694e6b9adbf7090060ec05",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1318.3766269308392,
+        "Y": 2528.424738189342
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "2a11c67f99cf4786b579db65f688ce8d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1317.4439127964938,
+        "Y": 2445.4850580663851
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "8b9256c2a11e474ab075488ece44d58c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1322.5345506184633,
+        "Y": 2933.7441839233015
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "95a76b34d6b24513a3e8f33ccaba923e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1321.3455747817857,
+        "Y": 2852.4338860939829
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "3565488fb082401193b1d630a600ef87",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1464.7424826022934,
+        "Y": 1757.4332903650411
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "run it",
+        "Id": "bc0e28d18e434a39aff44dec03885428",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1370.4124870807166,
+        "Y": 1610.0644648450982
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "sorting one list by another",
+        "Id": "ace865a4ceec4608aa98ab3d17024e23",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1385.5672699275383,
+        "Y": 1069.7289468794936
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "View Set Element Overrides",
+        "Id": "2c8a4a0b5ee9485fb47ec46a2aa3a5de",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -966.12942282012546,
+        "Y": 1162.1218478045573
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.Reverse",
+        "Id": "de4deb65bf124d1090c9b5a379922c06",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1815.2754283848626,
+        "Y": 1173.2902527727063
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "remove all normal dates",
+        "Id": "57522521f64f4fd487039f4ea92e5f77",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1497.2998925044078,
+        "Y": 145.51537962743117
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "View Set Element Overrides",
+        "Id": "83d92b182dfc43198953367317a86838",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -154.77059574532757,
+        "Y": 430.3537038999329
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "View Set Element Overrides",
+        "Id": "1c69a2126f444f8087af2ec790d601c5",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -171.7612687294868,
+        "Y": -195.50547213368577
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "sorting one list by another",
+        "Id": "c0270e4750e8455887aa05ad50c44614",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -596.348197718265,
+        "Y": -236.4075542451186
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "run it",
+        "Id": "d7d8db7c9d9c4f73b71598178c999ef0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -573.46979204939953,
+        "Y": 692.68364576345289
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "sorting one list by another",
+        "Id": "622565079c454b29b5953f4cba4f896d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -703.17109534244992,
+        "Y": 393.275278893361
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List Create",
+        "Id": "09a50c9a5017438a945f0887d86f10c2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -25.042863718787657,
+        "Y": 615.53299660283892
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Color Palette",
+        "Id": "f622d832e23040aba94595b63553c882",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -217.32512402021757,
+        "Y": 604.875056427109
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "compare two lists",
+        "Id": "bd6d3b7b0afd4bbc9ab239659a4a360f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1130.70266210863,
+        "Y": -156.63400169865204
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.FilterByBoolMask",
+        "Id": "7270227e86e6497b8c8c1f028475de7b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -902.44410896932845,
+        "Y": -290.34592390850696
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.FilterByBoolMask",
+        "Id": "62ecbb92d14b4d1fa87134a902f70c03",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -862.8393323647515,
+        "Y": 97.349088533551765
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "compare two lists",
+        "Id": "03f9292dc1904c7590f0f2a53c170978",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1091.0978855040535,
+        "Y": 231.06101074340677
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get date",
+        "Id": "9141a4b7e7694fd798512b85f6880c01",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -868.10727500519306,
+        "Y": 475.21862484879978
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get date",
+        "Id": "6815f188174147e08f13ffe6eab0cacf",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -763.24983933691965,
+        "Y": -125.70849141014241
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get tagged element",
+        "Id": "0c23dad010c04cbe8db98069d4e36a7f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1093.4475164238565,
+        "Y": 550.222000159013
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "sorted",
+        "Id": "7927696cf7a240eb80123a973d623d87",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -2003.1592365786476,
+        "Y": 1182.0003703729667
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "576bd9e53c12435c8de35747b4b10133",
+        "Title": "for some reason script doesn't work if list contains of tags and clouds together so I divided them, not a big deal\r\n",
+        "Nodes": [],
+        "Left": -989.56109763541474,
+        "Top": 1074.2876542255019,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "76c419aba587472ca4a6c1ae288c7593",
+        "Title": "it's possible to have cloud but no tag\r\n",
+        "Nodes": [],
+        "Left": -1983.5723309241057,
+        "Top": 1084.039939917034,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "9b71d1645d874b10a1990b82ab2e399f",
+        "Title": "for some reason script doesn't work if list contains of tags and clouds together so I divided them, not a big deal\r\n",
+        "Nodes": [],
+        "Left": -192.61840260409429,
+        "Top": 156.90683514385472,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      },
+      {
+        "Id": "367ec0c5ccb84cdb9df9d28734ee2b89",
+        "Title": "situation when we need multiple red colors\r\n\r\n",
+        "Nodes": [],
+        "Left": -1467.5142180371713,
+        "Top": 23.13289195136457,
+        "Width": 0.0,
+        "Height": 0.0,
+        "FontSize": 36.0,
+        "InitialTop": 0.0,
+        "InitialHeight": 0.0,
+        "TextblockHeight": 0.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 2385.0675531720703,
+    "Y": 45.617390031014565,
+    "Zoom": 1.3691389410799149
+  }
+}

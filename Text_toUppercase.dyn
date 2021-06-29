@@ -1,0 +1,123 @@
+{
+  "Uuid": "9172ca6e-e0a6-4ce8-b3a2-61dddd80a1a5",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Text_toUppercase",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\nimport clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\n\n# Import ToDSType(bool) extension method\nclr.AddReference(\"RevitNodes\")\nimport Revit\nclr.ImportExtensions(Revit.Elements)\n\n# Import DocumentManager and TransactionManager\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nfrom System.Collections.Generic import *\n\n# Import RevitAPI\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\n\nfrom Autodesk.Revit.DB import *\nimport System\n\ndoc = DocumentManager.Instance.CurrentDBDocument\nuiapp = DocumentManager.Instance.CurrentUIApplication\napp = uiapp.Application\n\n#The inputs to this node will be stored as a list in the IN variable.\n\n#TransactionManager.Instance.EnsureInTransaction(doc)\n\n#unwrap all elements to use with API\ntop_align = System.Enum.GetValues(LeaderAtachement)[0]\n\nelements = []\n\nif isinstance(IN[0], list):\n\tfor i in IN[0]:\n\t\telements.append(UnwrapElement(i))\n\tfor i in elements:\n\t\t\n\t\ti.Text=i.Text.upper()\n\t\ti.Text = i.Text.replace(\"MM \", \"mm \")\n\t\ti.Text = i.Text.replace(\" MM\", \" mm\")\n\t\ti.Text = i.Text.replace(\"0mm\", \"0 mm\")\n\t\ti.Text = i.Text.replace(\"1mm\", \"1 mm\")\n\t\ti.Text = i.Text.replace(\"2mm\", \"2 mm\")\n\t\ti.Text = i.Text.replace(\"3mm\", \"3 mm\")\n\t\ti.Text = i.Text.replace(\"4mm\", \"5 mm\")\n\t\ti.Text = i.Text.replace(\"5mm\", \"5 mm\")\n\t\ti.Text = i.Text.replace(\"6mm\", \"6 mm\")\n\t\ti.Text = i.Text.replace(\"7mm\", \"7 mm\")\n\t\ti.Text = i.Text.replace(\"8mm\", \"8 mm\")\n\t\ti.Text = i.Text.replace(\"9mm\", \"9 mm\")\n\t\ti.Text = i.Text.replace(\"UPVC\", \"uPVC\")\n\t\t\n\t\ti.LeaderRightAttachment = top_align\n\t\ti.LeaderLeftAttachment = top_align\n\t\t\nelse: \n\telements = UnwrapElement(IN[0])\n\t\n\telements.Text=elements.Text.upper()\n\telements.Text = elements.Text.replace(\"MM \", \"mm \")\n\telements.Text = elements.Text.replace(\" MM\", \" mm\")\n\telements.Text = elements.Text.replace(\"0mm\", \"0 mm\")\n\telements.Text = elements.Text.replace(\"1mm\", \"1 mm\")\n\telements.Text = elements.Text.replace(\"2mm\", \"2 mm\")\n\telements.Text = elements.Text.replace(\"3mm\", \"3 mm\")\n\telements.Text = elements.Text.replace(\"4mm\", \"5 mm\")\n\telements.Text = elements.Text.replace(\"5mm\", \"5 mm\")\n\telements.Text = elements.Text.replace(\"6mm\", \"6 mm\")\n\telements.Text = elements.Text.replace(\"7mm\", \"7 mm\")\n\telements.Text = elements.Text.replace(\"8mm\", \"8 mm\")\n\telements.Text = elements.Text.replace(\"9mm\", \"9 mm\")\n\telements.Text = elements.Text.replace(\"UPVC\", \"uPVC\")\t\n\n\telements.LeaderRightAttachment = top_align\n\telements.LeaderLeftAttachment = top_align\n\n\t\nOUT = \"done\"",
+      "VariableInputPorts": true,
+      "Id": "eea76b6989904fe4a46e040727467721",
+      "Inputs": [
+        {
+          "Id": "09ca79de9ceb4e17a46ed7fa3266b91c",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8964d67aac004155a92ac000f254b39d",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "3a2320b3-08cb-4fb4-a121-21de633c20a7-00a22a14"
+      ],
+      "Id": "0b1a8441b6bc4d58a9326c437f860962",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7605a7d126954042a99580702cf81269",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "7605a7d126954042a99580702cf81269",
+      "End": "09ca79de9ceb4e17a46ed7fa3266b91c",
+      "Id": "4c78bce2c9dc4e62b40b3b06f64d78dc"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "Id": "eea76b6989904fe4a46e040727467721",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Python Script",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 654.802313443883,
+        "Y": 298.7834749717091
+      },
+      {
+        "Id": "0b1a8441b6bc4d58a9326c437f860962",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Select Model Elements",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 271.89889894882344,
+        "Y": 300.0902795417698
+      }
+    ],
+    "Annotations": [],
+    "X": -457.9632461534834,
+    "Y": -91.149508868535349,
+    "Zoom": 1.4347934247201612
+  }
+}

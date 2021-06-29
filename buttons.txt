@@ -1,0 +1,24 @@
+﻿{
+    "SMC Design"  : [
+"Sheet_New", 
+"Print_Current", 
+"Print_Last_Rev",
+"Element_White",
+"Category_White", 
+"Rev.Clouds_Override",
+"Element_Transp",
+"Linetype",
+"View_Template_Remove",
+"View_last_on_Sheet",
+"View_Open1",
+"View_last_template",
+"Open_ext_ref",
+"Family_DELETE",
+"Viewport_MOVE",
+"Viewport_MOVE_btw_docs",
+"View_Crop",
+"View_DELETE"
+
+
+]   
+ }

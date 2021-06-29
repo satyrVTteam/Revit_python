@@ -1,0 +1,168 @@
+{
+  "Uuid": "e9858819-f7f0-4972-86aa-e709e0c50eed",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Family_DELETE",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.Delete@Revit.Elements.Element",
+      "Id": "b28a9176533943efbc11727c007a3b2a",
+      "Inputs": [
+        {
+          "Id": "f96bc1a2dee1409585672de48b498279",
+          "Name": "element",
+          "Description": "The element to delete.\n\nElement",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "66d0d7d6a9d942c29643f086a78d5e35",
+          "Name": "int[]",
+          "Description": "The list of element id's deleted, including any dependent elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Delete the element and any elements that are totally dependent upon the element.\n\nElement.Delete (element: Element): int[]"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\ndoc =  DocumentManager.Instance.CurrentDBDocument\r\napp = DocumentManager.Instance.CurrentUIApplication.Application\r\n\r\nclr.AddReference(\"RevitAPI\")\r\nfrom Autodesk.Revit.DB import *\r\n\r\n\r\n\r\nf = IN[0]\r\n\r\nx = []\r\n\r\nif isinstance(f, list): \r\n\tfor i in f:\r\n\t\tx.append(i.Type.Family)\r\nelse: x.append(f.Type.Family)\r\n\r\nOUT = x",
+      "VariableInputPorts": true,
+      "Id": "55a1f566b85f4b478f9e8164ef2963ec",
+      "Inputs": [
+        {
+          "Id": "cc5f8330b1d84ee39447e94a7f61ac9b",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "35fc567b8b2d46bbbbd7c86a0143b05a",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "84eb07fe-2f9e-4eb1-bc71-9ab39bcc8ba1-00824839"
+      ],
+      "Id": "ba50428c67f74d41b2019f2e1da7e10b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9f7b664cfaf24a1ab0439aad464c1ed4",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "35fc567b8b2d46bbbbd7c86a0143b05a",
+      "End": "f96bc1a2dee1409585672de48b498279",
+      "Id": "a360c61d610d41ed8d63fbdc5ebc4c30"
+    },
+    {
+      "Start": "9f7b664cfaf24a1ab0439aad464c1ed4",
+      "End": "cc5f8330b1d84ee39447e94a7f61ac9b",
+      "Id": "461ec53c98d140449facef11721dd40b"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "Id": "b28a9176533943efbc11727c007a3b2a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Element.Delete",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 463.06055953675025,
+        "Y": 96.365551299074511
+      },
+      {
+        "Id": "55a1f566b85f4b478f9e8164ef2963ec",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "get type family",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 263.44035725687,
+        "Y": 121.577556121615
+      },
+      {
+        "Id": "ba50428c67f74d41b2019f2e1da7e10b",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Name": "Select Model Elements",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": -55.647046707318538,
+        "Y": 167.16110610782522
+      }
+    ],
+    "Annotations": [],
+    "X": 38.704010165178261,
+    "Y": 285.44811932571167,
+    "Zoom": 0.97182687479800278
+  }
+}
