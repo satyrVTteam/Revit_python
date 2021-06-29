@@ -1,0 +1,395 @@
+{
+  "Uuid": "2274096c-0a79-446d-9718-daa550292a3e",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "Robot.Claddings.Final.may",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Point": {
+        "Key": "Autodesk.DesignScript.Geometry.Point",
+        "Value": "ProtoGeometry.dll"
+      },
+      "Line": {
+        "Key": "Autodesk.DesignScript.Geometry.Line",
+        "Value": "ProtoGeometry.dll"
+      },
+      "Math": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "Vector": {
+        "Key": "Autodesk.DesignScript.Geometry.Vector",
+        "Value": "ProtoGeometry.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "C:\\Users\\64210\\AppData\\Roaming\\Dynamo\\Dynamo Core\\2.6\\packages\\Structural Analysis for Dynamo\\bin\\RSA\\Interop.RobotOM.dll",
+      "Id": "0c9bc8bba7a6470d998463bfb9a62819",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8742d38e8c3b40679e6c6f679e2e013e",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Two-way",
+      "Id": "4617356ccad4468697c63c74aefbebcf",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "489ccc42f07c4f44bc5462c14ce5e6d3",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "One-way X",
+      "Id": "d5fbacb0ca774b86a3d51f9ff828f7db",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6c4c179d73f742f59b031ed26dcf4818",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "One-way Y",
+      "Id": "b859d52fb27741129c77a3507089311e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "efb164ba3dfd4ebf969e76ec2d8e3234",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\nfrom System import Environment\r\nuser = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)\r\nclr.AddReferenceToFileAndPath(IN[1])#or r\"C:\\Users\\64210\\AppData\\Roaming\\Dynamo\\Dynamo Core\\2.6\\packages\\Structural Analysis for Dynamo\\bin\\RSA\\Interop.RobotOM.dll\"\r\nfrom RobotOM import *\r\nfrom System import Object\r\nfrom math import *\r\nfrom itertools import compress\r\n\r\nclad_typename = IN[2]\r\n\r\n#vars for robot\r\napp = RobotApplicationClass()\r\nproject = app.Project\r\nstructure = project.Structure\r\nlabels = structure.Labels\r\nloads = structure.Cases\r\nProjectPrefs = project.Preferences\r\nbars = structure.Bars\r\nobjects = structure.Objects\r\nnodes = structure.Nodes\r\n\r\nxnode = IN[0]\r\n\r\n\r\n\r\ndef program_one_point(xnode):\r\n\t# 3 POINT PROGRAM\r\n\t# The inputs to this node will be stored as a list in the IN variables.\r\n\t\r\n\tdef find_req_nodes(xnode):\r\n\t\t#GET THE NODES\r\n\t\tif type(xnode)!=str:\r\n\t\t\tcoll = bars.GetAll()\r\n\t\t\tnode = xnode\t#check for the  looping process safety\r\n\t\t\tx = nodes.GetConnectedBars(node) #bars connected to point\r\n\t\t\tf = []\r\n\t\t\tfor i in range(1,x.Count+1,1): f.append(coll.Get(i)) #get bars\r\n\t\t\tz = []\r\n\t\t\tfor i in range(1,x.Count+1,1): z.append(x.Get(i)) #get bars' numbers\r\n\t\t\ta = []\r\n\t\t\tfor i in z: a.append(bars.Get(i)) #and get bars back, that how it works\r\n\t\t\ts = []\r\n\t\t\tfor i in a: s.append(nodes.Get(i.StartNode)) #get nodes\r\n\t\t\te = []\r\n\t\t\tfor i in a: e.append(nodes.Get(i.EndNode)) #get nodes\t\r\n\t\t\t#make the list of nodes\r\n\t\t\tnodelistS = []\r\n\t\t\tfor i in s: nodelistS.append(Point.ByCoordinates(i.x,i.y,i.z))\r\n\t\t\tnodelistE = []\r\n\t\t\tfor i in e: nodelistE.append(Point.ByCoordinates(i.x,i.y,i.z))\r\n\t\t\t#make preselected basepoint\r\n\t\t\tbasepoint = Point.ByCoordinates(nodes.Get(node).X, nodes.Get(node).Y, nodes.Get(node).Z)\r\n\t\t\t#clean unwanted points\r\n\t\t\twhile basepoint in nodelistS: nodelistS.remove(basepoint) \r\n\t\t\twhile basepoint in nodelistE: nodelistE.remove(basepoint)\r\n\t\t\tbp = []\r\n\t\t\tbp.append(basepoint)\r\n\t\t\tnodelist = bp+nodelistS+nodelistE\r\n\t\telse: nodelist = \"all done\"\r\n\t\treturn nodelist\r\n\r\n\tnodelist = find_req_nodes(xnode)\r\n\t\r\n\t\r\n\t\r\n\tinput = nodelist\r\n\t\r\n\t\r\n\t\r\n\tdef program3():\t\r\n\t\tfn = objects.FreeNumber\r\n\t\tp1 = input[0]\r\n\t\tp2 = input[1]\r\n\t\tp3 = input[2]\r\n\t\t\r\n\t\tpoints = app.CmpntFactory.Create(IRobotComponentType.I_CT_POINTS_ARRAY)\r\n\t\tpoints.SetSize(3)\r\n\t\tpoints.Set(1,p1.X,p1.Y,p1.Z)\r\n\t\tpoints.Set(2,p2.X,p2.Y,p2.Z)\r\n\t\tpoints.Set(3,p3.X,p3.Y,p3.Z)\r\n\t\t\r\n\t\tobjects.CreateContour(fn, points)\r\n\t\tro = objects.Get(fn)\r\n\t\t\r\n\t\tro.Initialize()\r\n\t\tro.SetLabel(IRobotLabelType.I_LT_CLADDING, clad_typename)\r\n\t\tro.Update()\r\n\t\r\n\tif len(input) == 3: program3()\r\n\t# END\r\n\t\r\n\t\r\n\t\r\n\t# 4 POINT PROGRAM\r\n\tdef program4():\r\n\t\t#get nodes from the list\r\n\t\tp1 = input[0]\r\n\t\tp2 = input[1]\r\n\t\tp3 = input[2]\r\n\t\tp4 = input[3]\r\n\t\t\r\n\t\t#get angle between 3 vectors\r\n\t\tv1 = Vector.ByTwoPoints(p1,p2)\r\n\t\tv2 = Vector.ByTwoPoints(p1,p3)\r\n\t\tv3 = Vector.ByTwoPoints(p1,p4)\r\n\t\t\r\n\t\tv12 = [p1,p2,p3]\r\n\t\tv23 = [p1,p3,p4]\r\n\t\tv13 = [p1,p2,p4]\r\n\t\tv_comb = [v12]+[v23]+[v13]\r\n\t\t\r\n\t\tx1 = v1.X\r\n\t\ty1 = v1.Y\r\n\t\tz1 = v1.Z\r\n\t\tx2 = v2.X\r\n\t\ty2 = v2.Y\r\n\t\tz2 = v2.Z\r\n\t\tx3 = v3.X\r\n\t\ty3 = v3.Y\r\n\t\tz3 = v3.Z\r\n\t\t\r\n\t\t#get first angle\r\n\t\tab = x1*x2+y1*y2+z1*z2\r\n\t\taa = sqrt(x1*x1+y1*y1+z1*z1)\r\n\t\tbb = sqrt(x2*x2+y2*y2+z2*z2)\r\n\t\tangle1 = acos(ab/(aa*bb))*57.2958\r\n\t\t#get second angle\r\n\t\tab = x1*x3+y1*y3+z1*z3\r\n\t\taa = sqrt(x1*x1+y1*y1+z1*z1)\r\n\t\tbb = sqrt(x3*x3+y3*y3+z3*z3)\r\n\t\tangle3 = acos(ab/(aa*bb))*57.2958\r\n\t\t#get third angle\r\n\t\tab = x2*x3+y2*y3+z2*z3\r\n\t\taa = sqrt(x2*x2+y2*y2+z2*z2)\r\n\t\tbb = sqrt(x3*x3+y3*y3+z3*z3)\r\n\t\tangle2 = acos(ab/(aa*bb))*57.2958\r\n\t\t\r\n\t\tangles_list = [angle1]+[angle2]+[angle3]\r\n\t\t \r\n\t\t#create two list of nodes suitable for cladding\r\n\t\tmm = angles_list.index(max(angles_list))\r\n\t\tnew_input = []\r\n\t\tfor i in v_comb:\r\n\t\t new_input.append(i)\r\n\t\tdel new_input[mm] \r\n\t\t\r\n\t\t#get nodes from the new list\r\n\t\tp1 = new_input[0][0]\r\n\t\tp2 = new_input[0][1]\r\n\t\tp3 = new_input[0][2]\r\n\t\tp4 = new_input[1][0]\r\n\t\tp5 = new_input[1][1]\r\n\t\tp6 = new_input[1][2]\r\n\t\t\r\n\t\t#get first free number and create polyline\r\n\t\tfn = objects.FreeNumber\r\n\t\tpoints = app.CmpntFactory.Create(IRobotComponentType.I_CT_POINTS_ARRAY)\r\n\t\tpoints.SetSize(3)\r\n\t\tpoints.Set(1,p1.X,p1.Y,p1.Z)\r\n\t\tpoints.Set(2,p2.X,p2.Y,p2.Z)\r\n\t\tpoints.Set(3,p3.X,p3.Y,p3.Z)\r\n\t\t\r\n\t\tobjects.CreateContour(fn, points)\r\n\t\tro = objects.Get(fn)\r\n\t\t\r\n\t\tro.Initialize()\r\n\t\tro.SetLabel(IRobotLabelType.I_LT_CLADDING, clad_typename)\r\n\t\tro.Update()\r\n\t\t#end\r\n\t\t\r\n\t\t#get first free number and create polyline\r\n\t\tfn = objects.FreeNumber\r\n\t\tpoints = app.CmpntFactory.Create(IRobotComponentType.I_CT_POINTS_ARRAY)\r\n\t\tpoints.SetSize(3)\r\n\t\tpoints.Set(1,p4.X,p4.Y,p4.Z)\r\n\t\tpoints.Set(2,p5.X,p5.Y,p5.Z)\r\n\t\tpoints.Set(3,p6.X,p6.Y,p6.Z)\r\n\t\t\r\n\t\tobjects.CreateContour(fn, points)\r\n\t\tro = objects.Get(fn)\r\n\t\t\r\n\t\tro.Initialize()\r\n\t\tro.SetLabel(IRobotLabelType.I_LT_CLADDING, clad_typename)\r\n\t\tro.Update()\r\n\t\t#end\r\n\t\t\r\n\tif len(input) == 4: program4()\r\n\t# END\r\n\t\r\n\t\r\n\t\r\n\t# 5 POINT PROGRAM STARTS \r\n\tdef program5():\r\n\t\t# nodelist string 52 or close\r\n\t\t\r\n\t\t#get distance\r\n\t\tp1, p_array = nodelist[0], nodelist[1:]\r\n\t\t\r\n\t\tif type(p1) == list:\r\n\t\t    y = p1[0]\r\n\t\telse:\r\n\t\t    y = p1\r\n\t\t\r\n\t\tldist = []\r\n\t\tfor i in p_array:\r\n\t\t   t = sqrt((i.X - p1.X)**2 + (i.Y - p1.Y)**2 + (i.Z - p1.Z)**2); \r\n\t\t   ldist.append(t)\r\n\t\t   \r\n\t\t#first max value and sorting into lists\r\n\t\tlist_d = ldist\r\n\t\tmaxs = max(list_d)\r\n\t\t\r\n\t\ty = list_d.index(maxs)\r\n\t\tx = len(list_d)\r\n\t\tz = [10<9]*x\r\n\t\tz[y] = 10>9\r\n\t\t#end\r\n\t\t\r\n\t\t#apply bool mask\r\n\t\tinlist = p_array\r\n\t\tcompare = z\r\n\t\tcompare_out = [not x for x in z]\r\n\t\tin_first= list(compress(inlist,compare))\r\n\t\tout_first= list(compress(inlist,compare_out))\r\n\t\t\r\n\t\t#find distance between in_ and out_\r\n\t\t\r\n\t\tpp1 = in_first \r\n\t\tp_array = out_first\r\n\t\t\r\n\t\tif type(pp1) == list:\r\n\t\t    p1 = pp1[0]\r\n\t\telse:\r\n\t\t    p1 = pp1\r\n\t\t\r\n\t\tlistdd = []\r\n\t\t\r\n\t\tfor i in p_array:\r\n\t\t\tt = sqrt((i.X - p1.X)**2 + (i.Y - p1.Y)**2 + (i.Z - p1.Z)**2)\r\n\t\t\tlistdd.append(t)\r\n\t\t\t\r\n\t\t# get angle between 3 points in 3 dir\r\n\t\t\r\n\t\tpt1 = nodelist[0]\r\n\t\tpt2 = in_first\r\n\t\tpt3x = out_first\r\n\t\t\r\n\t\tpt3 = pt3x[0]\r\n\t\tpt4 = pt3x[1]\r\n\t\tpt5 = pt3x[2]\r\n\t\t\r\n\t\tif type(pt1) == list: p1 = pt1[0]\r\n\t\telse: p1 = pt1\r\n\t\t\r\n\t\tif type(pt2) == list: p2 = pt2[0]\r\n\t\telse: p2 = pt2\r\n\t\t\r\n\t\tif type(pt3) == list: p3 = pt3[0]\r\n\t\telse: p3 = pt3\r\n\t\t\r\n\t\tif type(pt4) == list: p4 = pt4[0]\r\n\t\telse: p4 = pt4\r\n\t\t\r\n\t\tif type(pt5) == list: p5 = pt5[0]\r\n\t\telse: p5 = pt5\r\n\t\t# Place your code below this line\r\n\t\tv1 = Vector.ByTwoPoints(p1,p2)\r\n\t\tv2 = Vector.ByTwoPoints(p1,p3)\r\n\t\tv3 = Vector.ByTwoPoints(p1,p4)\r\n\t\tv4 = Vector.ByTwoPoints(p1,p5)\r\n\t\t\r\n\t\tx1 = v1.X\r\n\t\ty1 = v1.Y\r\n\t\tz1 = v1.Z\r\n\t\tx2 = v2.X\r\n\t\ty2 = v2.Y\r\n\t\tz2 = v2.Z\r\n\t\tx3 = v3.X\r\n\t\ty3 = v3.Y\r\n\t\tz3 = v3.Z\r\n\t\tx4 = v4.X\r\n\t\ty4 = v4.Y\r\n\t\tz4 = v4.Z\r\n\t\t\r\n\t\t\r\n\t\t#get first angle\r\n\t\tab = x1*x2+y1*y2+z1*z2\r\n\t\taa = sqrt(x1*x1+y1*y1+z1*z1)\r\n\t\tbb = sqrt(x2*x2+y2*y2+z2*z2)\r\n\t\tangle1 = acos(ab/(aa*bb))*57.2958\r\n\t\t#get second angle\r\n\t\tab = x1*x3+y1*y3+z1*z3\r\n\t\taa = sqrt(x1*x1+y1*y1+z1*z1)\r\n\t\tbb = sqrt(x3*x3+y3*y3+z3*z3)\r\n\t\tangle2 = acos(ab/(aa*bb))*57.2958\r\n\t\t#get third angle\r\n\t\tab = x1*x4+y1*y4+z1*z4\r\n\t\taa = sqrt(x1*x1+y1*y1+z1*z1)\r\n\t\tbb = sqrt(x4*x4+y4*y4+z4*z4)\r\n\t\tangle3 = acos(ab/(aa*bb))*57.2958\r\n\t\t\r\n\t\tangles = [angle1]+[angle2]+[angle3]\r\n\t\t\r\n\t\t# multiple lists and get rid of first max value\r\n\t\t\r\n\t\tlist1 = angles\r\n\t\tlist2 = listdd\r\n\t\tproduct = []\r\n\t\t\r\n\t\tfor num1, num2 in zip(list1, list2):\r\n\t\t    product.append(num1*num2)\r\n\t\t    \r\n\t\t#get rid of\r\n\t\tlist_p = product\r\n\t\tmaxx = max(list_p)\r\n\t\t\r\n\t\ty = list_p.index(maxx)\r\n\t\tx = len(list_p)\r\n\t\tz = [10>9]*x\r\n\t\tz[y] = 10<9\r\n\t\t\r\n\t\t#apply bool mask\r\n\t\tinlist = out_first\r\n\t\tcompare = z\r\n\t\tcompare_out = [not x for x in z]\r\n\t\tin_s= list(compress(inlist,compare))\r\n\t\tout_s= list(compress(inlist,compare_out))\r\n\t\t\r\n\t\t# CREATING CLADDINGS FINAL PART \r\n\t\t\r\n\t\tp1 = nodelist[0]\r\n\t\tp2 = in_first\r\n\t\tp3 = in_s[0]\r\n\t\tp4 = in_s[1]\r\n\t\tp5 = out_s\r\n\t\t\r\n\t\t#check if input is list\r\n\t\t\r\n\t\tcollection = [p1,p2,p3,p4,p5]\r\n\t\tnew_coll = []\r\n\t\tfor x in collection:\r\n\t\t    if type(x) == list: new_coll.append(x[0])\r\n\t\t    else: new_coll.append(x)\r\n\t\t\r\n\t\tp1 = new_coll[0]\r\n\t\tp2 = new_coll[1]\r\n\t\tp3 = new_coll[2]\r\n\t\tp4 = new_coll[3]\r\n\t\tp5 = new_coll[4]\r\n\t\t\r\n\t\t#create cladding\r\n\t\r\n\t\tfn = objects.FreeNumber\r\n\t\t\r\n\t\tpoints = app.CmpntFactory.Create(IRobotComponentType.I_CT_POINTS_ARRAY)\r\n\t\tpoints.SetSize(3)\r\n\t\tpoints.Set(1,p1.X,p1.Y,p1.Z)\r\n\t\tpoints.Set(2,p2.X,p2.Y,p2.Z)\r\n\t\tpoints.Set(3,p3.X,p3.Y,p3.Z)\r\n\t\t\r\n\t\tobjects.CreateContour(fn, points)\r\n\t\tro = objects.Get(fn)\r\n\t\t\r\n\t\tro.Initialize()\r\n\t\tro.SetLabel(IRobotLabelType.I_LT_CLADDING, clad_typename)\r\n\t\tro.Update()\r\n\t\t\r\n\t\tfn = objects.FreeNumber\r\n\t\t\r\n\t\tpoints = app.CmpntFactory.Create(IRobotComponentType.I_CT_POINTS_ARRAY)\r\n\t\tpoints.SetSize(3)\r\n\t\tpoints.Set(1,p1.X,p1.Y,p1.Z)\r\n\t\tpoints.Set(2,p2.X,p2.Y,p2.Z)\r\n\t\tpoints.Set(3,p4.X,p4.Y,p4.Z)\r\n\t\t\r\n\t\tobjects.CreateContour(fn, points)\r\n\t\tro = objects.Get(fn)\r\n\t\t\r\n\t\tro.Initialize()\r\n\t\tro.SetLabel(IRobotLabelType.I_LT_CLADDING, clad_typename)\r\n\t\tro.Update()\r\n\t\t\r\n\t\t\r\n\t\tfn = objects.FreeNumber\r\n\t\t\r\n\t\tpoints = app.CmpntFactory.Create(IRobotComponentType.I_CT_POINTS_ARRAY)\r\n\t\tpoints.SetSize(3)\r\n\t\tpoints.Set(1,p1.X,p1.Y,p1.Z)\r\n\t\tpoints.Set(2,p3.X,p3.Y,p3.Z)\r\n\t\tpoints.Set(3,p5.X,p5.Y,p5.Z)\r\n\t\t\r\n\t\tobjects.CreateContour(fn, points)\r\n\t\tro = objects.Get(fn)\r\n\t\t\r\n\t\tro.Initialize()\r\n\t\tro.SetLabel(IRobotLabelType.I_LT_CLADDING, clad_typename)\r\n\t\tro.Update()\r\n\t\t\r\n\t\tfn = objects.FreeNumber\r\n\t\t\r\n\t\tpoints = app.CmpntFactory.Create(IRobotComponentType.I_CT_POINTS_ARRAY)\r\n\t\tpoints.SetSize(3)\r\n\t\tpoints.Set(1,p1.X,p1.Y,p1.Z)\r\n\t\tpoints.Set(2,p4.X,p4.Y,p4.Z)\r\n\t\tpoints.Set(3,p5.X,p5.Y,p5.Z)\r\n\t\t\r\n\t\tobjects.CreateContour(fn, points)\r\n\t\tro = objects.Get(fn)\r\n\t\t\r\n\t\tro.Initialize()\r\n\t\tro.SetLabel(IRobotLabelType.I_LT_CLADDING, clad_typename)\r\n\t\tro.Update()\r\n\t\r\n\tif len(input) == 5: program5()\r\n\t\r\n\t\r\n#for i in xnode:\r\n#\tprogram_one_point(xnode) #EXECUTE THE MTHFCKER!\r\n\r\na = []\r\nz = []\r\n    \r\nfor i in xnode:\r\n    a = program_one_point(int(i))\r\n    z.append(a)\r\n    \r\nresult = z\r\n#\r\n#\r\n#while find_req_nodes():\r\n#\txnode = find_req_nodes()[1]\r\n#\tresult.append(xnode)\r\n\r\n#OUT = 'you are awesome'\r\nOUT = result\r\n",
+      "VariableInputPorts": true,
+      "Id": "608960c56eb440a7a391ba6520dfa226",
+      "Inputs": [
+        {
+          "Id": "da76e1ae77b14dc7a0976f3b43a9b061",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "39cec6b3bc2f4ddea5c6e11016e093e1",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0fa7348529dc44c08fcca7fd2c913df1",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "89fe99820d484c99b5827295d77e6437",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "143360283b734bbf8ede216997fe5ea2",
+      "Inputs": [
+        {
+          "Id": "595aafa34f62484290dba8187099bbc4",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9189a30118fd444a9504eb31bfd2ec47",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\nfrom System import Environment\r\nuser = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)\r\nclr.AddReferenceToFileAndPath(IN[0])#or r\"C:\\Users\\64210\\AppData\\Roaming\\Dynamo\\Dynamo Core\\2.6\\packages\\Structural Analysis for Dynamo\\bin\\RSA\\Interop.RobotOM.dll\"\r\nfrom RobotOM import *\r\nfrom System import Object\r\n\r\nrandom = IN[1]\r\n\r\napp = RobotApplicationClass()\r\nproject = app.Project\r\nstructure = project.Structure\r\nlabels = structure.Labels\r\nloads = structure.Cases\r\nProjectPrefs = project.Preferences\r\nbars = structure.Bars\r\nobjects = structure.Objects\r\nnodes = structure.Nodes\r\n\r\n\r\nsel = structure.Selections.Get(IRobotObjectType.I_OT_NODE)\r\nsel2 = nodes.GetMany(sel)\r\n\r\nf = []\r\nfor i in range(1,sel2.Count+1,1): f.append(sel.Get(i))\r\n\r\n\r\nOUT = f\r\n",
+      "VariableInputPorts": true,
+      "Id": "bd9b9e4eacec4ea58190ed8031bf941c",
+      "Inputs": [
+        {
+          "Id": "e2140111be9a4044a3e5239d45f65961",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "fb9cab1bdf3b4c79a24955b0e5d6935e",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b674e29c6cb04ba195afe10d51959db2",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 100.0,
+      "MinimumValue": 0.0,
+      "StepValue": 0.1,
+      "InputValue": 28.200000000000003,
+      "Id": "3fb3fc0321b349b6b9de8a480e921321",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "de79abdab8554e80b0c45fe0d8074c85",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "8742d38e8c3b40679e6c6f679e2e013e",
+      "End": "39cec6b3bc2f4ddea5c6e11016e093e1",
+      "Id": "11982c9a160d4625a0fab74d82064de3"
+    },
+    {
+      "Start": "8742d38e8c3b40679e6c6f679e2e013e",
+      "End": "e2140111be9a4044a3e5239d45f65961",
+      "Id": "87ff039aee5d4d9ab39de2e26a02922c"
+    },
+    {
+      "Start": "489ccc42f07c4f44bc5462c14ce5e6d3",
+      "End": "0fa7348529dc44c08fcca7fd2c913df1",
+      "Id": "01c805d369a743dab7402c6a346eff6c"
+    },
+    {
+      "Start": "b674e29c6cb04ba195afe10d51959db2",
+      "End": "595aafa34f62484290dba8187099bbc4",
+      "Id": "2506f190ca2e41a9b480aab91bbc85bc"
+    },
+    {
+      "Start": "b674e29c6cb04ba195afe10d51959db2",
+      "End": "da76e1ae77b14dc7a0976f3b43a9b061",
+      "Id": "9ca26a44c64048b4b41612de20561aa2"
+    },
+    {
+      "Start": "de79abdab8554e80b0c45fe0d8074c85",
+      "End": "fb9cab1bdf3b4c79a24955b0e5d6935e",
+      "Id": "badf2349056943c888071875fabc94da"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.0.8481",
+      "RunType": "Manual",
+      "RunPeriod": "10000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -4.418514548171113,
+      "EyeY": 13.72454526368478,
+      "EyeZ": 15.891520394151019,
+      "LookX": -2.1223476674348758,
+      "LookY": -6.0925763512469135,
+      "LookZ": -22.832152988716885,
+      "UpX": -0.0040372070316610576,
+      "UpY": 0.99904822158186024,
+      "UpZ": -0.043432152991888393
+    },
+    "NodeViews": [
+      {
+        "ShowGeometry": true,
+        "Name": "Robot library address",
+        "Id": "0c9bc8bba7a6470d998463bfb9a62819",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1083.0302526308483,
+        "Y": -1563.9807060006262
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Cladding type",
+        "Id": "4617356ccad4468697c63c74aefbebcf",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -932.95572125439071,
+        "Y": -1649.705189921038
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Cladding type",
+        "Id": "d5fbacb0ca774b86a3d51f9ff828f7db",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -934.98333775599212,
+        "Y": -1717.3729728869935
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Cladding type",
+        "Id": "b859d52fb27741129c77a3507089311e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -929.16683565615,
+        "Y": -1778.8969941957544
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Create cladding aroud given point",
+        "Id": "608960c56eb440a7a391ba6520dfa226",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -662.30517954833613,
+        "Y": -1576.5008805784823
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "check",
+        "Id": "143360283b734bbf8ede216997fe5ea2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -599.44921783756433,
+        "Y": -1388.6171394364078
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get selected nodes",
+        "Id": "bd9b9e4eacec4ea58190ed8031bf941c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -839.44075945424606,
+        "Y": -1390.1712678913361
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "slide it before Run to restart the goddam script",
+        "Id": "3fb3fc0321b349b6b9de8a480e921321",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -1267.0552950305903,
+        "Y": -1380.9908679949244
+      }
+    ],
+    "Annotations": [],
+    "X": 1064.8839743689759,
+    "Y": 1441.6978902773044,
+    "Zoom": 0.77600035504295617
+  }
+}
