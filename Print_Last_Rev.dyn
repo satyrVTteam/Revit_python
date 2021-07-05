@@ -7,7 +7,15 @@
     "ResolutionMap": {}
   },
   "Inputs": [],
-  "Outputs": [],
+  "Outputs": [
+    {
+      "Id": "089886d9dbd64623af9105cd81fdf310",
+      "Name": "Watch",
+      "Type": "unknown",
+      "InitialValue": "",
+      "Description": "Visualize the output of node."
+    }
+  ],
   "Nodes": [
     {
       "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
@@ -326,91 +334,6 @@
       "Description": "Runs an embedded IronPython script."
     },
     {
-      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
-      "NodeType": "PythonScriptNode",
-      "Code": "#Copyright(c) 2015, Konrad K Sobon\r\n# @arch_laboratory, http://archi-lab.net\r\n\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# Import Element wrapper extension methods\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\n# Import geometry conversion extension methods\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\n# Import RevitAPI\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nimport sys\r\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pyt_path)\r\nimport System\r\n\r\n#The inputs to this node will be stored as a list in the IN variable.\r\ndataEnteringNode = IN\r\n\r\nsheets = IN[0]\r\npRange = System.Enum.Parse(Autodesk.Revit.DB.PrintRange, IN[1])\r\n#combined = IN[2]\r\nprinterName = IN[3]\r\nprintSetting = IN[4][0]\r\nfilePath = IN[5]\r\nrunIt = IN[6]\r\n\r\nif isinstance(sheets, list):\r\n\tviewSheets = []\r\n\tfor i in sheets:\r\n\t\tviewSheets.append(UnwrapElement(i))\r\nelse:\r\n\tviewSheets = UnwrapElement(sheets)\r\n\r\ndef PrintView(doc, sheet, pRange, printerName, printSetting):\r\n\t# create view set \r\n\tviewSet = ViewSet()\r\n\tviewSet.Insert(sheet)\r\n\t# determine print range\r\n\tprintManager = doc.PrintManager\r\n\tprintManager.PrintRange = pRange\r\n\tprintManager.Apply()\r\n\t# make new view set current\r\n\tviewSheetSetting = printManager.ViewSheetSetting\r\n\tviewSheetSetting.CurrentViewSheetSet.Views = viewSet\r\n\t# set printer\r\n\tprintManager.SelectNewPrintDriver(printerName)\r\n\tprintManager.Apply()\r\n\t# set combined and print to file\r\n\r\n\ttry:\r\n\t\tprintSetup = printManager.PrintSetup\r\n\t\tprintSetup.CurrentPrintSetting = printSetting\r\n\t\tprintManager.Apply()\r\n\texcept:\r\n\t\tpass\r\n\t# save settings and submit print\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\tviewSheetSetting.SaveAs(\"tempSetName\")\r\n\tprintManager.Apply()\r\n\tprintManager.SubmitPrint()\r\n\tviewSheetSetting.Delete()\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\r\n\treturn True\r\n\r\ntry:\r\n\tviewSets = FilteredElementCollector(doc).OfClass(ViewSheetSet)\r\n\tfor i in viewSets:\r\n\t\tif i.Name == \"tempSetName\":\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tdoc.Delete(i.Id)\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\telse:\r\n\t\t\tcontinue\r\n\t\t\r\n\terrorReport = None\r\n\tmessage = \"Success\"\r\n\tif runIt:\r\n\t\tif isinstance(viewSheets, list) and isinstance(printSetting, list):\r\n\t\t\tfor i, j in zip(viewSheets, printSetting):\r\n\t\t\t\tPrintView(doc, i, pRange, printerName,  j)\r\n\t\telif isinstance(viewSheets, list) and not isinstance(printSetting, list):\r\n\t\t\tfor i in viewSheets:\r\n\t\t\t\tPrintView(doc, i, pRange, printerName, printSetting)\r\n\t\telif not isinstance(viewSheets, list) and not isinstance(printSetting, list):\r\n\t\t\tPrintView(doc, viewSheets, pRange, printerName, printSetting)\r\n\telse:\r\n\t\tmessage = \"Set RunIt to True\"\r\nexcept:\r\n\t# if error accurs anywhere in the process catch it\r\n\timport traceback\r\n\terrorReport = traceback.format_exc()\r\n\t\r\n#Assign your output to the OUT variable\r\nif errorReport == None:\r\n\tOUT = message\r\nelse:\r\n\tOUT = errorReport",
-      "VariableInputPorts": true,
-      "Id": "60a1e9b845d14bd9b51673b3d55d93a8",
-      "Inputs": [
-        {
-          "Id": "cec6b789295947a7929cbdd24cf86b28",
-          "Name": "IN[0]",
-          "Description": "Input #0",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "e3ee2f1a8e554616821279662e8c98f9",
-          "Name": "IN[1]",
-          "Description": "Input #1",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "08301f4e90a54d5fa376bd671527627d",
-          "Name": "IN[2]",
-          "Description": "Input #2",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "4a1ac98c2ecd4327ab7871cf32c28628",
-          "Name": "IN[3]",
-          "Description": "Input #3",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "32c7a758da5e46348186c5d888031e11",
-          "Name": "IN[4]",
-          "Description": "Input #4",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "46d4fcf141ea481fa755027e748b41c5",
-          "Name": "IN[5]",
-          "Description": "Input #5",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "39231b0368504e1f961e6fd4bcd22e98",
-          "Name": "IN[6]",
-          "Description": "Input #6",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "58ae7979196c4504a6d247263f99c323",
-          "Name": "OUT",
-          "Description": "Result of the python script",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Runs an embedded IronPython script."
-    },
-    {
       "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
       "NodeType": "CodeBlockNode",
       "Code": "\"0_views\";\n\"1 print range\";\n\n\"3 printer name\";\n\"4 print settings\";\n\n\"6 runit\";",
@@ -467,66 +390,6 @@
       "Description": "Allows for DesignScript code to be authored directly"
     },
     {
-      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
-      "NodeType": "CodeBlockNode",
-      "Code": "\"Select\";",
-      "Id": "3b77410d470846e3adb4992b53107f89",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "7b89bf180d01460ab4b6e42e0fa963a6",
-          "Name": "",
-          "Description": "Value of expression at line 1",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Allows for DesignScript code to be authored directly"
-    },
-    {
-      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
-      "NodeType": "BooleanInputNode",
-      "InputValue": true,
-      "Id": "dbd4fba3060f47c487db6c190ade9861",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "adca287d505a4ed1a41b0d52e99a510d",
-          "Name": "",
-          "Description": "Boolean",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Selection between a true and false."
-    },
-    {
-      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
-      "NodeType": "StringInputNode",
-      "InputValue": "pdfFactory Pro",
-      "Id": "6d52f49d65bc42f2bfca10d218e641fb",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "e47818e02872425d9ba98c18dd2a3ab5",
-          "Name": "",
-          "Description": "String",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Creates a string."
-    },
-    {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
       "Code": "import clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\n#getting all the views required\r\n#lv = FilteredElementCollector(doc).OfClass(ViewPlan).WhereElementIsNotElementType().ToElements()\r\n\r\n#xx = FilteredElementCollector(doc).OfClass(ViewSection).WhereElementIsNotElementType().ToElements()\r\n\r\nyy = FilteredElementCollector(doc).OfClass(ViewSheet).WhereElementIsNotElementType().ToElements()\r\n\r\n\r\nOUT = yy\r\n\r\n",
@@ -556,127 +419,6 @@
       ],
       "Replication": "Disabled",
       "Description": "Runs an embedded IronPython script."
-    },
-    {
-      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
-      "NodeType": "PythonScriptNode",
-      "Code": "import clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nyy = FilteredElementCollector(doc).OfClass(PrintSetting).WhereElementIsNotElementType().ToElements()\r\n\r\nzz = []\r\nfor i in yy: zz.append(i.Name)\r\n\r\nt = zip(zz,yy)\r\n\r\nflat_list = []\r\nfor sublist in t:\r\n    for item in sublist:\r\n        flat_list.append(item)\r\n\r\nOUT = flat_list\r\n\r\n",
-      "VariableInputPorts": true,
-      "Id": "bf53547f49a7468f861b69830e55e3f2",
-      "Inputs": [
-        {
-          "Id": "2f5e7190c1ed4adcbf5d4ae2e23821ac",
-          "Name": "IN[0]",
-          "Description": "Input #0",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "880d220df8a34ee79fdfda726927fc4b",
-          "Name": "OUT",
-          "Description": "Result of the python script",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Runs an embedded IronPython script."
-    },
-    {
-      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
-      "NodeType": "StringInputNode",
-      "InputValue": "A1",
-      "Id": "152193275d6543fbbe9bf14ae0eb49d4",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "2b8c668de2884f50adfcbaec4bf815d1",
-          "Name": "",
-          "Description": "String",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Creates a string."
-    },
-    {
-      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
-      "NodeType": "PythonScriptNode",
-      "Code": "inp = int(float(IN[0]))\r\noutp = []\r\n\r\nif inp == 841: outp.append('A1')\r\nelif inp==594: outp.append('A2')\r\nelif inp==297: outp.append('A4')\t\t\r\nelse: outp.append('A3')#default scenrio\r\n\t\t\r\nOUT = outp[0]\r\n",
-      "VariableInputPorts": true,
-      "Id": "07746ec6485743009010c3d03b353221",
-      "Inputs": [
-        {
-          "Id": "b8679a0afe3b4fe1ab2a8e90b105cc40",
-          "Name": "IN[0]",
-          "Description": "Input #0",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "1549cde3bc024500bfe6c57e11ab97ae",
-          "Name": "OUT",
-          "Description": "Result of the python script",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Runs an embedded IronPython script."
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "DSCore.List.Flatten@var[]..[],int",
-      "Id": "d36c2a4467154646b1c7acb71bffb4ad",
-      "Inputs": [
-        {
-          "Id": "ea097a0fd3e143f08ca91e6f09d21852",
-          "Name": "list",
-          "Description": "List to flatten.\n\nvar[]..[]",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "19432ea5887a4c388e4d5b31f3893dd1",
-          "Name": "amt",
-          "Description": "Layers of nesting to remove.\n\nint\nDefault value : -1",
-          "UsingDefaultValue": true,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "623ccbc91c11482bb2ed64ec1aeac969",
-          "Name": "var[]..[]",
-          "Description": "var[]..[]",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Flattens a nested list of lists by a certain amount.\n\nList.Flatten (list: var[]..[], amt: int = -1): var[]..[]"
     },
     {
       "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSVarArgFunction, DynamoCore",
@@ -849,76 +591,6 @@
       ],
       "Replication": "Auto",
       "Description": "Retrieves the last item in a list.\n\nList.LastItem (list: var[]..[]): var[]..[]"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "DSCore.List.FirstItem@var[]..[]",
-      "Id": "a7cf04a613764022826e1ce47f270465",
-      "Inputs": [
-        {
-          "Id": "36517a282d26460895f954d1f602ce57",
-          "Name": "list",
-          "Description": "List to get the first item from.\n\nvar[]..[]",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "85fe07e8e46e4ebd97b00493a9430587",
-          "Name": "item",
-          "Description": "First item in the list.",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Returns the first item in a list.\n\nList.FirstItem (list: var[]..[]): var[]..[]"
-    },
-    {
-      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
-      "NodeType": "PythonScriptNode",
-      "Code": "inp = IN[0]\r\nsearch = IN[1]\r\nz = map(str,inp)\r\n\r\nfilter = []\r\n\r\nfor i in z:\r\n\tif search in i: filter.append(\"True\")\r\n\telse: filter.append(\"False\")\r\n\r\nx = []\r\nfor i in range(0,len(z)):\r\n\tif filter[i] == 'True': x.append(inp[i+1])\r\n\r\nif not x: x.append(inp[1])\r\n\r\nOUT = x\r\n",
-      "VariableInputPorts": true,
-      "Id": "cebf506440fb46ddb0c1c7072d589334",
-      "Inputs": [
-        {
-          "Id": "7b1b179683254aae9b69193a5b4ada94",
-          "Name": "IN[0]",
-          "Description": "Input #0",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "59d3ad6002684b0cb4286a3513dcdada",
-          "Name": "IN[1]",
-          "Description": "Input #1",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "77154713617f4aa38365779272b4fd32",
-          "Name": "OUT",
-          "Description": "Result of the python script",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Runs an embedded IronPython script."
     },
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
@@ -1104,6 +776,381 @@
       ],
       "Replication": "Disabled",
       "Description": "Convert an object to a string representation."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "inp = IN[1]\r\nsearch = IN[0]\r\nobj = IN[2]\r\nz = []\r\n\r\nfor i in inp:\r\n\tfor j in range(len(search)):\r\n\t\tif i in search[j]: z.append(obj[j+1])\r\n\r\n\r\nOUT = z",
+      "VariableInputPorts": true,
+      "Id": "62c0890494da40ad8cc5156d57fc98ca",
+      "Inputs": [
+        {
+          "Id": "fc674afac191403caf8795ebd0bf9b5e",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e0992ae5b9ed4a3ba2df7b3f852f23be",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c353878164d249fdbc676a9d3b838db0",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "000ae432495a4522a91edc4f511888ca",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "089886d9dbd64623af9105cd81fdf310",
+      "Inputs": [
+        {
+          "Id": "985137a4f54c4eafbb75661ba2148465",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6df9512cba48440b8084bc9cb3636c36",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.FromObject, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "ef5f43f01e104f46a913883952c5c3c0",
+      "Inputs": [
+        {
+          "Id": "4a6777c87f874902853dfb7f531978ea",
+          "Name": "obj",
+          "Description": "Object to be serialized",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b72270751a144d37b07a7b0d4c5c04f1",
+          "Name": "str",
+          "Description": "Result of math computation",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Convert an object to a string representation."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "outp = []\r\n\r\nfor i in IN[0]:\r\n\r\n\tinp = int(float(i))\r\n\tif inp == 841: outp.append('A1')\r\n\telif inp==594: outp.append('A2')\r\n\telif inp==297: outp.append('A4')\t\t\r\n\telse: outp.append('A3')#default scenrio\r\n\t\t\r\nOUT = outp\r\n",
+      "VariableInputPorts": true,
+      "Id": "7f8afec5d9f149a29ab4e9691ba917da",
+      "Inputs": [
+        {
+          "Id": "fa5fb882e64e4482a76f27b36d1a8b42",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1c8004835e9d46a18bca17e725da6760",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "#Copyright(c) 2015, Konrad K Sobon\r\n# @arch_laboratory, http://archi-lab.net\r\n\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# Import Element wrapper extension methods\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\n# Import geometry conversion extension methods\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\n\r\n# Import DocumentManager and TransactionManager\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\n# Import RevitAPI\r\nclr.AddReference(\"RevitAPI\")\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\nimport sys\r\npyt_path = r'C:\\Program Files (x86)\\IronPython 2.7\\Lib'\r\nsys.path.append(pyt_path)\r\nimport System\r\n\r\n#The inputs to this node will be stored as a list in the IN variable.\r\ndataEnteringNode = IN\r\n\r\nsheets = IN[0]\r\npRange = System.Enum.Parse(Autodesk.Revit.DB.PrintRange, IN[1])\r\n#combined = IN[2]\r\nprinterName = IN[3]\r\nprintsetting = IN[4]\r\nfilePath = IN[5]\r\nrunIt = IN[6]\r\n\r\nif isinstance(sheets, list):\r\n\tviewSheets = []\r\n\tfor i in sheets:\r\n\t\tviewSheets.append(UnwrapElement(i))\r\nelse:\r\n\tviewSheets = UnwrapElement(sheets)\r\n\t\r\nif isinstance(printsetting, list):\r\n\tprintSetting = []\r\n\tfor i in printsetting:\r\n\t\tprintSetting.append(UnwrapElement(i))\r\nelse:\r\n\tprintSetting = UnwrapElement(printsetting)\r\n\r\ndef PrintView(doc, sheet, pRange, printerName, printSetting):\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t# create view set \r\n\tviewSet = ViewSet()\r\n\tviewSet.Insert(sheet)\r\n\t# determine print range\r\n\tprintManager = doc.PrintManager\r\n\tprintManager.PrintRange = pRange\r\n\tprintManager.Apply()\r\n\t# make new view set current\r\n\tviewSheetSetting = printManager.ViewSheetSetting\r\n\tviewSheetSetting.CurrentViewSheetSet.Views = viewSet\r\n\t# set printer\r\n\tprintManager.SelectNewPrintDriver(printerName)\r\n\tprintManager.Apply()\r\n\t# set combined and print to file\r\n\r\n\t\r\n\tprintSetup = printManager.PrintSetup\r\n\tprintSetup.CurrentPrintSetting = printSetting\r\n\tprintManager.Apply()\r\n\r\n\t# save settings and submit print\r\n\r\n\tviewSheetSetting.SaveAs(\"tempSetName\")\r\n\tprintManager.Apply()\r\n\tprintManager.SubmitPrint()\r\n\tviewSheetSetting.Delete()\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\n\t\r\n\treturn True\r\n\r\ntry:\r\n\tviewSets = FilteredElementCollector(doc).OfClass(ViewSheetSet)\r\n\tfor i in viewSets:\r\n\t\tif i.Name == \"tempSetName\":\r\n\t\t\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\t\t\tdoc.Delete(i.Id)\r\n\t\t\tTransactionManager.Instance.ForceCloseTransaction()\r\n\t\telse:\r\n\t\t\tcontinue\r\n\t\t\r\n\terrorReport = None\r\n\tmessage = \"Success\"\r\n\tif runIt:\r\n\t\tif isinstance(viewSheets, list) and isinstance(printSetting, list):\r\n\t\t\tfor i, j in zip(viewSheets, printSetting):\r\n\t\t\t\tPrintView(doc, i, pRange, printerName,  j)\r\n\t\telif isinstance(viewSheets, list) and not isinstance(printSetting, list):\r\n\t\t\tfor i in viewSheets:\r\n\t\t\t\tPrintView(doc, i, pRange, printerName, printSetting)\r\n\t\telif not isinstance(viewSheets, list) and not isinstance(printSetting, list):\r\n\t\t\tPrintView(doc, viewSheets, pRange, printerName, printSetting)\r\n\telse:\r\n\t\tmessage = \"Set RunIt to True\"\r\nexcept:\r\n\t# if error accurs anywhere in the process catch it\r\n\timport traceback\r\n\terrorReport = traceback.format_exc()\r\n\t\r\n#Assign your output to the OUT variable\r\nif errorReport == None:\r\n\tOUT = message\r\nelse:\r\n\tOUT = errorReport",
+      "VariableInputPorts": true,
+      "Id": "1206bc04787a432c8fd749f55494c42c",
+      "Inputs": [
+        {
+          "Id": "0bff32170f1c4f708dadfba6e35e83b2",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "bbd6df7f720e4692a70cec8bd73dddc5",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ad6f1350319c4829b9e3491b1633451c",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3d20fa5571174092ae66f887f79ffc60",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "65a91256b8f44144a363a03a2f81c6d7",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8077547cda844a8cac186851f1776718",
+          "Name": "IN[5]",
+          "Description": "Input #5",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "8ce21d6762844b97b2d91a25e55d5467",
+          "Name": "IN[6]",
+          "Description": "Input #6",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "06d3afb3240a4763a85ccc3aba4abef1",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "95db08b08cf1438b9ff74d0a59f5cd41",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8aa1075d19c04fc696725bf39fa7b752",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nyy = FilteredElementCollector(doc).OfClass(PrintSetting).WhereElementIsNotElementType().ToElements()\r\n\r\nzz = []\r\nfor i in yy: zz.append(i.Name)\r\n\r\nt = zip(zz,yy)\r\n\r\nflat_list = []\r\nfor sublist in t:\r\n    for item in sublist:\r\n        flat_list.append(item)\r\n\r\nOUT = flat_list\r\n\r\n",
+      "VariableInputPorts": true,
+      "Id": "16ab765e1f9849d3b88e5496f4faecd2",
+      "Inputs": [
+        {
+          "Id": "bf5f3977ea174d1caf33289eefc94012",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "2b0b2a26accd4d4ea2af1363d07a4d0c",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "pdfFactory Pro",
+      "Id": "c6147ac4d80e4b688d3ddda86707aa33",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "880507a1845042e8ab06abc2b5a9aea9",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.FirstItem@var[]..[]",
+      "Id": "293165e3bd9742b2b6470d76eddbe81a",
+      "Inputs": [
+        {
+          "Id": "48ad46a1ff87440da4deee2e32f7877e",
+          "Name": "list",
+          "Description": "List to get the first item from.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "95ec6680d7a14dcf8d2bc5b78c6db320",
+          "Name": "item",
+          "Description": "First item in the list.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Longest",
+      "Description": "Returns the first item in a list.\n\nList.FirstItem (list: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\r\n\r\ninput = IN[0]\r\nelements = []\r\n\r\nif isinstance(input, list): \r\n\tfor i in input:\telements.append(i)\r\nelse: elements = [input]\r\n\t\t\r\nOUT = elements",
+      "VariableInputPorts": true,
+      "Id": "116d77b442cf4ff4824ca427c091fec7",
+      "Inputs": [
+        {
+          "Id": "db8bc92bba37422cada9e6141c7573f9",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "6f61eab929da4955990f154e830671dc",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Select\";",
+      "Id": "a3ea0922b14d496c9e16f4b4fb675e05",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5c1c86859ef749e4be070d5ae4436d95",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
     }
   ],
   "Connectors": [
@@ -1129,8 +1176,8 @@
     },
     {
       "Start": "df6f5dd5e6ff467f83644d72d747915d",
-      "End": "cec6b789295947a7929cbdd24cf86b28",
-      "Id": "23fdf9c589a743749394b0917fbc37fc"
+      "End": "0bff32170f1c4f708dadfba6e35e83b2",
+      "Id": "e1f1213dee8a4702975fdb06db45d350"
     },
     {
       "Start": "6f6206adc62543c7958f9969ee821892",
@@ -1163,21 +1210,6 @@
       "Id": "6f93b4b34bde4d4ba9fb31b74c18c445"
     },
     {
-      "Start": "7b89bf180d01460ab4b6e42e0fa963a6",
-      "End": "e3ee2f1a8e554616821279662e8c98f9",
-      "Id": "eaec032ed8f748c68bdf99e8f6609a94"
-    },
-    {
-      "Start": "adca287d505a4ed1a41b0d52e99a510d",
-      "End": "39231b0368504e1f961e6fd4bcd22e98",
-      "Id": "389e254184e548ef9c94329de5fed00d"
-    },
-    {
-      "Start": "e47818e02872425d9ba98c18dd2a3ab5",
-      "End": "4a1ac98c2ecd4327ab7871cf32c28628",
-      "Id": "7afa2f7ad5534d83974682fd18558696"
-    },
-    {
       "Start": "fe6c84e31812479eaa25474886e73558",
       "End": "c189928ed953447eb445631451d56e1f",
       "Id": "c4f361a1e1f544f785ceb883ced0447c"
@@ -1198,24 +1230,9 @@
       "Id": "97ede3bf7dd9432dbc6829bfe6fd3e3d"
     },
     {
-      "Start": "880d220df8a34ee79fdfda726927fc4b",
-      "End": "7b1b179683254aae9b69193a5b4ada94",
-      "Id": "d2df7325b21143a18a0b881ff4dcfc23"
-    },
-    {
-      "Start": "1549cde3bc024500bfe6c57e11ab97ae",
-      "End": "59d3ad6002684b0cb4286a3513dcdada",
-      "Id": "7764ee40fca8441596f99ca85b7119de"
-    },
-    {
-      "Start": "623ccbc91c11482bb2ed64ec1aeac969",
-      "End": "36517a282d26460895f954d1f602ce57",
-      "Id": "e216547d26bc4c77935d0243026b74d6"
-    },
-    {
       "Start": "1a3186f3eb3f439bb85ed3be07f68f04",
-      "End": "ea097a0fd3e143f08ca91e6f09d21852",
-      "Id": "4d354bb5b2be47b1a4d4271186042ca4"
+      "End": "48ad46a1ff87440da4deee2e32f7877e",
+      "Id": "40217a43d5a641f1ace6eceadc35ed45"
     },
     {
       "Start": "ac8636f0718648cc84cd79096ec029f3",
@@ -1238,16 +1255,6 @@
       "Id": "696963b8eaa04f3ba16e8b3e1f251a02"
     },
     {
-      "Start": "85fe07e8e46e4ebd97b00493a9430587",
-      "End": "b8679a0afe3b4fe1ab2a8e90b105cc40",
-      "Id": "2cb925249b044df1b3f2436eb15cdc09"
-    },
-    {
-      "Start": "77154713617f4aa38365779272b4fd32",
-      "End": "32c7a758da5e46348186c5d888031e11",
-      "Id": "a117977f5e9e4aec8465c302e179fbb8"
-    },
-    {
       "Start": "df77f1b852f8453fb08b53d8ad109762",
       "End": "5c95ffc910e648ecac95fdee932b8068",
       "Id": "260430e8e3e747dd8dad0cfeac575b17"
@@ -1266,6 +1273,61 @@
       "Start": "398b6f5b1e224777b4168753d1ad5b2f",
       "End": "1408a0b8c58e4a68b852e2cd3ac19a13",
       "Id": "791dc3c933c94f70b478f48906415f38"
+    },
+    {
+      "Start": "000ae432495a4522a91edc4f511888ca",
+      "End": "65a91256b8f44144a363a03a2f81c6d7",
+      "Id": "38eceb8c626447aaabe0b393fe73c7ea"
+    },
+    {
+      "Start": "b72270751a144d37b07a7b0d4c5c04f1",
+      "End": "fc674afac191403caf8795ebd0bf9b5e",
+      "Id": "508e969d34a24f6da2529f7c203fa2ed"
+    },
+    {
+      "Start": "1c8004835e9d46a18bca17e725da6760",
+      "End": "e0992ae5b9ed4a3ba2df7b3f852f23be",
+      "Id": "bb18c8af51bd4a4096ee0dd6caed3806"
+    },
+    {
+      "Start": "1c8004835e9d46a18bca17e725da6760",
+      "End": "985137a4f54c4eafbb75661ba2148465",
+      "Id": "7f047100c3ff4ae8a8c234eb90c99dff"
+    },
+    {
+      "Start": "8aa1075d19c04fc696725bf39fa7b752",
+      "End": "8ce21d6762844b97b2d91a25e55d5467",
+      "Id": "1f4c4f0f1a764cf38c0d9554f585cecc"
+    },
+    {
+      "Start": "2b0b2a26accd4d4ea2af1363d07a4d0c",
+      "End": "c353878164d249fdbc676a9d3b838db0",
+      "Id": "1d7810a200f341049c0973342633b368"
+    },
+    {
+      "Start": "2b0b2a26accd4d4ea2af1363d07a4d0c",
+      "End": "4a6777c87f874902853dfb7f531978ea",
+      "Id": "0ae0c134aadb493dbfd5f31b8fad64e3"
+    },
+    {
+      "Start": "880507a1845042e8ab06abc2b5a9aea9",
+      "End": "3d20fa5571174092ae66f887f79ffc60",
+      "Id": "c349cdddb96d4560bb5c3b60e2377b36"
+    },
+    {
+      "Start": "95ec6680d7a14dcf8d2bc5b78c6db320",
+      "End": "db8bc92bba37422cada9e6141c7573f9",
+      "Id": "646792a1adce4ea99ce9c163df4251ac"
+    },
+    {
+      "Start": "6f61eab929da4955990f154e830671dc",
+      "End": "fa5fb882e64e4482a76f27b36d1a8b42",
+      "Id": "456809d3edd44b2db7137cfe01e7deee"
+    },
+    {
+      "Start": "5c1c86859ef749e4be070d5ae4436d95",
+      "End": "bbd6df7f720e4692a70cec8bd73dddc5",
+      "Id": "17b171f1282a425fb576aabee9e5fb76"
     }
   ],
   "Dependencies": [],
@@ -1385,53 +1447,13 @@
       },
       {
         "ShowGeometry": true,
-        "Name": "print PDF by https://archi-lab.net/printing-pdfs-w-dynamo/",
-        "Id": "60a1e9b845d14bd9b51673b3d55d93a8",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3634.3863655160021,
-        "Y": 34.472861985640805
-      },
-      {
-        "ShowGeometry": true,
         "Name": "Code Block",
         "Id": "72217576c22a45fca96dacd4e82b37a7",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3638.3478465857734,
-        "Y": -184.09662482507662
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Code Block",
-        "Id": "3b77410d470846e3adb4992b53107f89",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3388.2540040854074,
-        "Y": -63.36128451196322
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "run it",
-        "Id": "dbd4fba3060f47c487db6c190ade9861",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3358.6206482678344,
-        "Y": 217.57343938138365
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "printer",
-        "Id": "6d52f49d65bc42f2bfca10d218e641fb",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3421.4044399511954,
-        "Y": 133.98678301130934
+        "X": 4036.5878712499216,
+        "Y": 118.27080130881376
       },
       {
         "ShowGeometry": true,
@@ -1442,46 +1464,6 @@
         "Excluded": false,
         "X": -83.060290088295,
         "Y": 271.42694215374866
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "get all print settings",
-        "Id": "bf53547f49a7468f861b69830e55e3f2",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3122.1231529106553,
-        "Y": 313.06979453519921
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Print A1 or A2 or A3",
-        "Id": "152193275d6543fbbe9bf14ae0eb49d4",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3102.3114521296238,
-        "Y": 460.9067749441611
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "get name from size",
-        "Id": "07746ec6485743009010c3d03b353221",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3385.3970739155079,
-        "Y": 912.29016961621915
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "List.Flatten",
-        "Id": "d36c2a4467154646b1c7acb71bffb4ad",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 2992.2395525068596,
-        "Y": 910.89617034357616
       },
       {
         "ShowGeometry": true,
@@ -1520,8 +1502,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2894.6036144686154,
-        "Y": 808.63896777434275
+        "X": 2764.40260243698,
+        "Y": 771.43867862244679
       },
       {
         "ShowGeometry": true,
@@ -1542,26 +1524,6 @@
         "Excluded": false,
         "X": 1468.6915624288065,
         "Y": 773.57451599515923
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "List.FirstItem",
-        "Id": "a7cf04a613764022826e1ce47f270465",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3195.9001494813374,
-        "Y": 912.85907120442494
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "find from name",
-        "Id": "cebf506440fb46ddb0c1c7072d589334",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3424.5615400272591,
-        "Y": 420.42400750086887
       },
       {
         "ShowGeometry": true,
@@ -1612,11 +1574,121 @@
         "Excluded": false,
         "X": 2002.0735356917089,
         "Y": 210.41535485627406
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "find from name",
+        "Id": "62c0890494da40ad8cc5156d57fc98ca",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3647.3008755647443,
+        "Y": 603.30422038427855
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "089886d9dbd64623af9105cd81fdf310",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 3496.2793395772419,
+        "Y": 817.30502003765685
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String from Object",
+        "Id": "ef5f43f01e104f46a913883952c5c3c0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3512.4111780295043,
+        "Y": 509.27630545360853
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get name from size",
+        "Id": "7f8afec5d9f149a29ab4e9691ba917da",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3380.7853163359359,
+        "Y": 973.8471004504878
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "print PDF by https://archi-lab.net/printing-pdfs-w-dynamo/",
+        "Id": "1206bc04787a432c8fd749f55494c42c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3946.1180079254445,
+        "Y": 307.47402066791847
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "run it",
+        "Id": "95db08b08cf1438b9ff74d0a59f5cd41",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3676.4067725068844,
+        "Y": 432.65222812191837
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "get all print settings",
+        "Id": "16ab765e1f9849d3b88e5496f4faecd2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3345.0392447921049,
+        "Y": 371.10967680391855
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "printer",
+        "Id": "c6147ac4d80e4b688d3ddda86707aa33",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3704.7155959801448,
+        "Y": 345.43662772972857
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.FirstItem",
+        "Id": "293165e3bd9742b2b6470d76eddbe81a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3164.2174436584246,
+        "Y": 744.16230800321784
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "input check",
+        "Id": "116d77b442cf4ff4824ca427c091fec7",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3192.2496921737966,
+        "Y": 874.9004591489678
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Code Block",
+        "Id": "a3ea0922b14d496c9e16f4b4fb675e05",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3695.2442042227949,
+        "Y": 258.16233322256835
       }
     ],
     "Annotations": [],
-    "X": -1201.6550441037577,
-    "Y": -166.52470304807741,
-    "Zoom": 0.69599255591261833
+    "X": 622.13303161634019,
+    "Y": 270.05113272628523,
+    "Zoom": 0.27052341115128664
   }
 }

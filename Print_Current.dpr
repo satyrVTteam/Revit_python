@@ -1,7 +1,8 @@
 {
     "presets" : {
         "Print_Current":{
-            "forceReopen":false
+            "useSelected":"Select Model Elements",  
+            "forceReopen":true
         }
     }
 }
