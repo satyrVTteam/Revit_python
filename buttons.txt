@@ -2,6 +2,7 @@
     "SMC Design"  : [
 "Sheet_New", 
 "Print_Current", 
+"Print_Current_Toshiba", 
 "Print_Last_Rev",
 "Element_White",
 "Category_White", 
