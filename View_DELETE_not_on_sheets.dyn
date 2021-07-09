@@ -435,7 +435,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "x = IN[0]\r\ny = IN[1]\r\nz = IN[2]\r\n\r\nf = []\r\n\r\nfor i in range(len(x)):\r\n\tfor j in range(len(y)):\r\n\t\tif x[i].find(y[j])!=-1: f.append(z[i])\r\n\t\r\n#for i in f:\r\n#\tz.remove(i)\r\n\t\r\nOUT = f",
+      "Code": "x = IN[0]\r\ny = IN[1]\r\nz = IN[2]\r\n\r\n\r\n#if you want to INCLUDE then swap jk.append(False) and jk.append(True)\r\njk = []\r\nzf = []\r\n\r\nfor i in range(len(x)):\r\n\tfor j in range(len(y)):\r\n\t\tif x[i].find(y[j])!=-1: \r\n\t\t\tzf = True\r\n\tif zf == True:\r\n\t\tjk.append(False)\r\n\telse:\r\n\t\tjk.append(True)\r\n\tzf = []\r\n\t\r\nist = zip(z,jk)\r\nkg = []\r\nfor i in ist:\r\n\tif i[1] ==True:\r\n\t\tkg.append(i[0])\r\n\t\r\nOUT = kg",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
       "Id": "163912e2415a4c47a4a80c671f327dd0",
@@ -687,6 +687,210 @@
       ],
       "Replication": "Disabled",
       "Description": "Convert an object to a string representation."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "#This script pops up a dialog box with a message from the previous node.\r\nimport clr\r\nclr.AddReference('RevitAPIUI')\r\n\r\nfrom Autodesk.Revit.UI import TaskDialog\r\n\r\nff = []\r\nfor i in IN[0]: ff.append(i + \" \\n\")\r\n\r\nmainText = \"DELETED LIST: \\n \" + ''.join(i for i in ff)\r\n\r\n\r\nif mainText != None and mainText != \"null\"  :\r\n\tmessagePop = TaskDialog(\"Dynamo Player\")\r\n\tmessagePop.MainContent = mainText\r\n\t\r\n\tOUT = \"Success!\"\r\n\t\r\n\tmessagePop.Show()",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "2f838d617b0c45b7845b917d1675fb82",
+      "Inputs": [
+        {
+          "Id": "fcc04c3358f84aecae64709b9033b5f6",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c8a5b25c8d7a429592777da2a7547f97",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.FromObject, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "6bba56f22efc4a56ab11517115e12f16",
+      "Inputs": [
+        {
+          "Id": "9daed46c201a42e49aec6f4fc5ae9f7f",
+          "Name": "object",
+          "Description": "Object to be serialized",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "91e9bf1d4df142f3ab3d7c5218ea28d8",
+          "Name": "string",
+          "Description": "String representation of the object",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Convert an object to a string representation."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\r\n\r\ninput = IN[0]\r\nelements = []\r\n\r\nif isinstance(input, list): \r\n\tfor i in input:\telements.append(i)\r\nelse: elements = [input]\r\n\t\t\r\nOUT = elements",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "596c3eb90fed47cbba115531421e9023",
+      "Inputs": [
+        {
+          "Id": "f30a4b80a52546fcb82fa5a40f0a0403",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b3c3012b43bb475ab0e59d36f3a14028",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "x = IN[0]\r\ny = IN[1]\r\nz = IN[2]\r\n\r\n\r\n#if you want to INCLUDE then swap jk.append(False) and jk.append(True)\r\njk = []\r\nzf = []\r\n\r\nfor i in range(len(x)):\r\n\tfor j in range(len(y)):\r\n\t\tif x[i].find(y[j])!=-1: \r\n\t\t\tzf = True\r\n\tif zf == True:\r\n\t\tjk.append(True)\r\n\telse:\r\n\t\tjk.append(False)\r\n\tzf = []\r\n\t\r\nist = zip(z,jk)\r\nkg = []\r\nfor i in ist:\r\n\tif i[1] ==True:\r\n\t\tkg.append(i[0])\r\n\t\r\nOUT = kg",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "09f475dacd86433e85bd78433c037d27",
+      "Inputs": [
+        {
+          "Id": "68eec05f5b1c44308dc4fe220e7a8bac",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7814608e5fc440a8b1c778f036762998",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "9653f2f99efb46d2a5962b0423eaa072",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "aeda16f678944d708d284cfedc645a23",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "b77cc25de9ff442f9502f206ba35f54b",
+      "Inputs": [
+        {
+          "Id": "f87b4e944cfe4b1fb40485e977e7445e",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "4fcc750e2cbe436dafca0f27ca887473",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "#This script pops up a dialog box with a message from the previous node.\r\nimport clr\r\nclr.AddReference('RevitAPIUI')\r\n\r\nfrom Autodesk.Revit.UI import TaskDialog\r\n\r\nff = []\r\nfor i in IN[0]: ff.append(i + \" \\n\")\r\n\r\nmainText = \"DELETED LIST: \\n \" + ''.join(i for i in ff)\r\n\r\n\r\nif mainText != None and mainText != \"null\"  :\r\n\tmessagePop = TaskDialog(\"Dynamo Player\")\r\n\tmessagePop.MainContent = mainText\r\n\t\r\n\tOUT = \"Success!\"\r\n\t\r\n\tmessagePop.Show()",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "878d41cdfc2e4068bc863640f7e0c56a",
+      "Inputs": [
+        {
+          "Id": "db363d5030c64dbe98a260b3858cfaa2",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8d58ed28b106486b91e74a3b15611fdd",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
     }
   ],
   "Connectors": [
@@ -694,11 +898,6 @@
       "Start": "787f845769f249b398308c064fd0aa20",
       "End": "83c9fdf40e484b4a84bd27897c496125",
       "Id": "c331afdd951c426f9baebf9309ee316b"
-    },
-    {
-      "Start": "dffbf9a873e249d189172c8966c2cfba",
-      "End": "585938c02f084ca598c28aafca45d734",
-      "Id": "256f773f671f440898966c968840d950"
     },
     {
       "Start": "dffbf9a873e249d189172c8966c2cfba",
@@ -761,14 +960,24 @@
       "Id": "881707eb7cbe44948e235f71884baed8"
     },
     {
+      "Start": "5ec73271231c434da6c08b87c5d6b683",
+      "End": "9daed46c201a42e49aec6f4fc5ae9f7f",
+      "Id": "1507b0ed007049fe953fb59a381cdcb5"
+    },
+    {
       "Start": "bc39b9d5d45540208b308fcc79df7e99",
       "End": "349650fa86cf42afaff8d4f61098d8c3",
       "Id": "75e4d9b5dc144d799b9d1d57ee7f188c"
     },
     {
+      "Start": "bc39b9d5d45540208b308fcc79df7e99",
+      "End": "7814608e5fc440a8b1c778f036762998",
+      "Id": "8500f8937bd24961bdae24e1d3eec94c"
+    },
+    {
       "Start": "77cd19b5814f40a89f831c43ae37cab7",
       "End": "10bfe5b3cd294345a830d722d84cbeb4",
-      "Id": "874b935833ce431f98547f0ecd880401"
+      "Id": "6650e0e10d9643efa5220ec1fffa0616"
     },
     {
       "Start": "d5d31751618c40d39439b66de1616c7a",
@@ -791,6 +1000,11 @@
       "Id": "fd44bae99d2343e8b8f8f9a0b6ffdb8d"
     },
     {
+      "Start": "dfc94849849f4fbcaeaf10694a46d9da",
+      "End": "68eec05f5b1c44308dc4fe220e7a8bac",
+      "Id": "d97ab47dd3754af3bbb32305ab2321db"
+    },
+    {
       "Start": "06960842c5a34f0fa18f5b24ede807ee",
       "End": "731488e536564f0ea0786e4813d035da",
       "Id": "f4de39f7a2cc4138aeff4d3a16c4ba04"
@@ -806,9 +1020,34 @@
       "Id": "2413562a709945c1ac14c00df2104efd"
     },
     {
+      "Start": "2076e73f06ac47a8b71393c3858f52ac",
+      "End": "585938c02f084ca598c28aafca45d734",
+      "Id": "1539477d14ff40f69c3bba37a2894bb1"
+    },
+    {
+      "Start": "2076e73f06ac47a8b71393c3858f52ac",
+      "End": "9653f2f99efb46d2a5962b0423eaa072",
+      "Id": "3d46fc0a4e5540b9aebaab7086582d3c"
+    },
+    {
       "Start": "dc40c6dda17e48269055f212305e22e0",
       "End": "f7935306259f481da3a25e05842b129c",
       "Id": "57c98afcc6b84e8cbd65a4a0b5ac0ac5"
+    },
+    {
+      "Start": "91e9bf1d4df142f3ab3d7c5218ea28d8",
+      "End": "f30a4b80a52546fcb82fa5a40f0a0403",
+      "Id": "2980e7041b4741ffa180103dc9d2ea3f"
+    },
+    {
+      "Start": "b3c3012b43bb475ab0e59d36f3a14028",
+      "End": "fcc04c3358f84aecae64709b9033b5f6",
+      "Id": "6cf7649144e0480db4d51753a6165aea"
+    },
+    {
+      "Start": "aeda16f678944d708d284cfedc645a23",
+      "End": "f87b4e944cfe4b1fb40485e977e7445e",
+      "Id": "83a3b808c14e41afa51e77579fb24ab8"
     }
   ],
   "Dependencies": [],
@@ -963,8 +1202,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 4591.5786409334405,
-        "Y": 493.7396547148594
+        "X": 4497.7393620806233,
+        "Y": 479.30284258365674
       },
       {
         "ShowGeometry": true,
@@ -993,8 +1232,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2143.0119612294166,
-        "Y": -87.202188977639139
+        "X": 2084.0828571719026,
+        "Y": -14.88010672523535
       },
       {
         "ShowGeometry": true,
@@ -1033,8 +1272,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 990.91982220877276,
-        "Y": 194.34733533021642
+        "X": 1139.2202217171075,
+        "Y": 347.31861356322315
       },
       {
         "ShowGeometry": true,
@@ -1043,8 +1282,68 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 800.43029023106135,
-        "Y": 279.11005596190404
+        "X": 955.737007826404,
+        "Y": 308.30304799110382
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "pop up message",
+        "Id": "2f838d617b0c45b7845b917d1675fb82",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 5264.01820561136,
+        "Y": 799.24937758720057
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String from Object",
+        "Id": "6bba56f22efc4a56ab11517115e12f16",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4860.78420245233,
+        "Y": 686.05331978935158
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "input check",
+        "Id": "596c3eb90fed47cbba115531421e9023",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 5064.1132921858452,
+        "Y": 780.28633168203692
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "comparator to INCL (str,str,element)",
+        "Id": "09f475dacd86433e85bd78433c037d27",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1694.8182256595303,
+        "Y": -238.45348476660394
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Watch",
+        "Id": "b77cc25de9ff442f9502f206ba35f54b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2086.2434073605014,
+        "Y": -289.5449100637606
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "pop up message",
+        "Id": "878d41cdfc2e4068bc863640f7e0c56a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1697.9349411647172,
+        "Y": -346.65690206639397
       }
     ],
     "Annotations": [
@@ -1066,8 +1365,8 @@
         "Background": "#FFC1D676"
       }
     ],
-    "X": -1089.4399047955399,
-    "Y": 47.04890519534905,
-    "Zoom": 0.69827380797959193
+    "X": -653.55148325635685,
+    "Y": 499.84737783353978,
+    "Zoom": 0.52131440861400524
   }
 }
