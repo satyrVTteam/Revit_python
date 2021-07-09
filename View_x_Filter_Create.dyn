@@ -1,0 +1,953 @@
+{
+  "Uuid": "e9858819-f7f0-4972-86aa-e709e0c50eed",
+  "IsCustomNode": false,
+  "Description": null,
+  "Name": "View_x_Filter_Create",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\n\r\nx = UnwrapElement (IN[0])\r\n\r\n\r\nif type(IN[0]) is list:\r\n\tviews = []\r\n\tfor i in x:\tviews.append(i.ViewId)\t\r\nelse:\r\n\tviews = x.ViewId\r\n\r\nOUT = views",
+      "VariableInputPorts": true,
+      "Id": "a7645d3b8dbf4955ac8bf949fc5203d2",
+      "Inputs": [
+        {
+          "Id": "1f767d5a2a4f4a68ac42c5e285853372",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ffedd0d281da4a0fb7d8b6d86b45cb54",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "DSRevitNodesUI.ElementById, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "Id": "ad95a4845a554719b9149046f52b0901",
+      "Inputs": [
+        {
+          "Id": "992d3f5f292c44e9aa13825317fa67a7",
+          "Name": "Id",
+          "Description": "Element Id as string, int or ElementId",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a9a8d25cffca48ddb9adecd912b82616",
+          "Name": "Element",
+          "Description": "The list of elements matching the query.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Gets the Element with the specified Id"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "5ff779b7145748e7b7ec362b7fa2c4f5",
+      "Inputs": [
+        {
+          "Id": "1725e8ea21ce4ea5b26656319521d40a",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d975dd023e5e43bcb3b9ae1abf500edd",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\r\n\r\n#Import Revit API\r\nimport clr\r\nclr.AddReference('RevitAPI')\r\nimport Autodesk\r\nfrom Autodesk.Revit.DB import *\r\n\r\n\r\nx = IN[0]\r\ny = UnwrapElement(x)\r\n\r\nviews = y.get_Parameter(BuiltInParameter.VIEW_TYPE).AsString()\r\n\r\nOUT = views",
+      "VariableInputPorts": true,
+      "Id": "ec6148591eef4d1190aed9a7393e7573",
+      "Inputs": [
+        {
+          "Id": "44c7fec150024926ba70993fa7aa7be5",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "db7e7aebdb614eacbac5ad512307f08d",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\r\n\r\n\r\nOUT = \"Sections_\"+IN[0]+\"_Except\"",
+      "VariableInputPorts": true,
+      "Id": "609eed3d996d4cfe893e253ea09908cd",
+      "Inputs": [
+        {
+          "Id": "3d2595012a0e4ffa89c111fdc3182cf5",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "68431271a70f4fb6a30af471e4f3d7dc",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\r\nx = IN[0].split(\"(\",1)\r\ny = x.pop(0)\r\nz = ''.join(x)\r\n\r\na = z.rsplit(\")\",1)\r\nc = ''.join(a)\r\n\r\nOUT =c",
+      "VariableInputPorts": true,
+      "Id": "a40983b4e39244a886c4395aac835832",
+      "Inputs": [
+        {
+          "Id": "45857f1d435442a4bbfbdd18e023935b",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "22830af0b1464fb090b9cd4bb91c6b89",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Sections\";",
+      "Id": "3a15782a11a348159a18980037505e2f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "9de96cf70b4042dfb46c832317a920e4",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Callouts\";",
+      "Id": "f7f252638240434185cedac9e18d159f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5324b7f94e104bcaab5369fc527be0a4",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.CreateList, CoreNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "1f74fa50f19a4d0daecdfee542f090af",
+      "Inputs": [
+        {
+          "Id": "b0b8d87a7d824ced9d0112493e39af85",
+          "Name": "item0",
+          "Description": "Item Index #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "7fcb330b98e54cb587c6a83adb4f933d",
+          "Name": "item1",
+          "Description": "Item Index #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00a3fefe361a4849954c6ebfcb6f850e",
+          "Name": "list",
+          "Description": "A list",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Makes a new list out of the given inputs"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\nimport System\nfrom System.Collections.Generic import *\nfrom System.Collections.Generic import List\n\ndoc=DocumentManager.Instance.CurrentDBDocument\napp=DocumentManager.Instance.CurrentUIApplication.Application\n#First construct an ICollection of StructuralFraming and Structural Column Categories:\nif IN[0] == True:\n\tbeamcolumncatlist=[]\n\tbeamcolumncatlist.Add(ElementId(BuiltInCategory.OST_StructuralFraming))\n\tbeamcolumncatlist.Add(ElementId(BuiltInCategory.OST_StructuralColumns))\n\tiCollBeamColumnCats=List[ElementId](beamcolumncatlist)\n\t#Next get the parameters you will be testing on (in this case the Comments parameter and the Family Name):\n\t\n\tpComment=ParameterValueProvider(ElementId(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS))\n\tpFamName=ParameterValueProvider(ElementId(BuiltInParameter.ALL_MODEL_FAMILY_NAME))\n\t#Next construct the Filter Rules/Tests on those parameters:\n\t\n\txFamName=FilterStringRule(pFamName,FilterStringBeginsWith(),\"Blue\",False)\n\txCommSteel=FilterStringRule(pComment,FilterStringEquals(),\"Steel\",False)\n\txCommMagnum=FilterStringRule(pComment,FilterStringEquals(),\"Magnum\",False)\n\t#Now construct the actual filter (ParameterFilterElement) - note that this must occur inside a transaction:\n\t\n\tTransactionManager.Instance.EnsureInTransaction(doc)\n\t##Make an ICollection of the “Blue” and “Steel” filter tests, then use that ICollection to construct an AND filter set.\n\t\n\tbeamcolumnfilt1=[]\n\tbeamcolumnfilt1.Add(ElementParameterFilter(xFamName))\n\tbeamcolumnfilt1.Add(ElementParameterFilter(xCommSteel))\n\ticolbeamcolumnfilt1=List[ElementFilter](beamcolumnfilt1)\n\tandbeamcolumnfilt1=LogicalAndFilter(icolbeamcolumnfilt1)\n\t##Now make an ICollection of the “Magnum” tests and the previous AND of “Blue”+“Steel”, then use that ICollection to construct an OR filter set.\n\t\n\tbeamcolumnfilt2=[]\n\tbeamcolumnfilt2.Add(ElementParameterFilter(xCommMagnum))\n\tbeamcolumnfilt2.Add(andbeamcolumnfilt1)\n\ticolbeamcolumnfilt2=List[ElementFilter](beamcolumnfilt2)\n\torbeamcolumnfilt2=LogicalOrFilter(icolbeamcolumnfilt2)\n\t##Now construct a ParameterFilterElement called “ZoolanderBeamsColumns” using the previously defined beam and column category ICollection and the OR ElementParameterFilter.\n\t\n\tpfebeamcolelem=ParameterFilterElement.Create(doc,\"ZoolanderBeamsColumns\",iCollBeamColumnCats,orbeamcolumnfilt2)\n\tTransactionManager.Instance.TransactionTaskDone()\n\t\nelse: OUT = \"add TRUE to IN[0] for RUN\"",
+      "VariableInputPorts": true,
+      "Id": "f90605164f47493fb3a2fc05003c9b60",
+      "Inputs": [
+        {
+          "Id": "f7bb9e76411b4f0492b8d3a336f164b1",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "9fa47a0f4ebf40859f806f0089c39b59",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\nimport System\nfrom System.Collections.Generic import *\nfrom System.Collections.Generic import List\n\ndoc=DocumentManager.Instance.CurrentDBDocument\napp=DocumentManager.Instance.CurrentUIApplication.Application\n#First construct an ICollection of StructuralFraming and Structural Column Categories:\n\nbeamcolumncatlist=[]\nfor i in IN[0]:\n\tbeamcolumncatlist.append(ElementId(i))\niCollBeamColumnCats=List[ElementId](beamcolumncatlist)\n#Next get the parameters you will be testing on (in this case the Comments parameter and the Family Name):\n\n\npFamName=ParameterValueProvider(ElementId(getattr(BuiltInParameter,IN[3])))\n#Next construct the Filter Rules/Tests on those parameters:\n\nxFamName1=FilterInverseRule(FilterStringRule(pFamName,FilterStringEquals(),IN[2][0],False))\nxFamName2=FilterInverseRule(FilterStringRule(pFamName,FilterStringEquals(),IN[2][1],False))\n\n#Now construct the actual filter (ParameterFilterElement) - note that this must occur inside a transaction:\n\nTransactionManager.Instance.EnsureInTransaction(doc)\n##Make an ICollection of the “Blue” and “Steel” filter tests, then use that ICollection to construct an AND filter set.\n\nbeamcolumnfilt1=[]\nbeamcolumnfilt1.Add(ElementParameterFilter(xFamName1))\nbeamcolumnfilt1.Add(ElementParameterFilter(xFamName2))\n\nicolbeamcolumnfilt1=List[ElementFilter](beamcolumnfilt1)\nandbeamcolumnfilt1=LogicalOrFilter(icolbeamcolumnfilt1)\n##Now make an ICollection of the “Magnum” tests and the previous AND of “Blue”+“Steel”, then use that ICollection to construct an OR filter set.\n\n\n##Now construct a ParameterFilterElement called “ZoolanderBeamsColumns” using the previously defined beam and column category ICollection and the OR ElementParameterFilter.\n\nif IN[4] == True:\n\tpfebeamcolelem=ParameterFilterElement.Create(doc,IN[1],iCollBeamColumnCats,andbeamcolumnfilt1)\n\tTransactionManager.Instance.TransactionTaskDone()\n\tOUT = IN[2]\nelse: OUT = \"feed TRUE to IN[4]\"\n\n",
+      "VariableInputPorts": true,
+      "Id": "e5845ccc1f264c88ae3d67f899c3f1b7",
+      "Inputs": [
+        {
+          "Id": "b7fdca902e22422a9fc88efee03c13fd",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b598121b71264523983e28984c95d582",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3156ac4c2c2a490f86b2b22f101d3b05",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "064f7cf5103b4e0db066ad967f5e254b",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "44cb08272d434694b236cceb087bd771",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "83c4c7bf60dc447eae0f02d8b7fde99c",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# by Alexander Berg | 2020-03-07 | Automated Design Solutions\n\nimport clr, System\nclr.AddReference('RevitAPI')\nimport Autodesk\nfrom Autodesk.Revit.DB import *\n\nx = IN[0]\n\ndef get_the_name(f):\n# by Alexander Berg | 2020-03-07 | Automated Design Solutions\n\tz = [i for i in System.Enum.GetValues(BuiltInCategory) if str(i) == \"OST_\"+f]\n\treturn z[0]\n\n\ns = []\nfor i in x:\n\ts.append(get_the_name(i))\n\n\n\nOUT = s",
+      "VariableInputPorts": true,
+      "Id": "ec4c670f7c35438bb9440c5b926cdfed",
+      "Inputs": [
+        {
+          "Id": "b4d12e8a83634871ac018f3b6e27f644",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "fab7adc9de4d4fa8b529592726d728fa",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded IronPython script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"StructuralColumns\";",
+      "Id": "dbc86dc59603452b95a3bd5112dcf83c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "032c375f44f7452f8649f2387a771d26",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"StructuralFraming\";",
+      "Id": "bfcb6a1bb8794237a6766d0081d78a49",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "a40e8b34340b4c4585577802d7c99aa6",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "VIEW_TYPE",
+      "Id": "4ca481bff4f74d27aaba4186aebbfb24",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "fb8a1c84a8e54050a4042f8809e53d76",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Sections (\"+x+\")\";",
+      "Id": "b12204e25ee74eb8a3892a87827a815e",
+      "Inputs": [
+        {
+          "Id": "3b5891166f0c4ffdac6e3feb917d5572",
+          "Name": "x",
+          "Description": "x",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8a7baebb1d914facb2c37435c422e9b9",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "0ef5823246634f4892126936f60bc67c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "04d59861cc0342e79bd13038b0514229",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.CreateList, CoreNodeModels",
+      "VariableInputPorts": true,
+      "NodeType": "ExtensionNode",
+      "Id": "41438ad560374e309fecf50a9b2f294a",
+      "Inputs": [
+        {
+          "Id": "fb8cddd507214a4e8ecd0ba012a78411",
+          "Name": "item0",
+          "Description": "Item Index #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "654d1bf467374015bb291ac862d38d04",
+          "Name": "item1",
+          "Description": "Item Index #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1f97174b28f44135a6bf95fc2ab2be8e",
+          "Name": "list",
+          "Description": "A list",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Makes a new list out of the given inputs"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"view to make filter\";",
+      "Id": "48e909b6c9d645d5be62fcf56bbdd139",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "84e95a3993fc47819c7618a381e939e9",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "34f6002b430d4370be1d9a09a4990650",
+      "Inputs": [
+        {
+          "Id": "371b835ab8cf4c2e9b52d03bb6ca42d5",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a3ccf3cb5e3e4b5fa222be25dfc03955",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the output of node."
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [],
+      "Id": "f1e854f540c7436a873d3a1b4944b13f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "dd7c53c6c55f4af890c87c7a898f3983",
+          "Name": "Element",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "ffedd0d281da4a0fb7d8b6d86b45cb54",
+      "End": "992d3f5f292c44e9aa13825317fa67a7",
+      "Id": "e0c1f4ba2ec742bbb97a614c6922047b"
+    },
+    {
+      "Start": "a9a8d25cffca48ddb9adecd912b82616",
+      "End": "44c7fec150024926ba70993fa7aa7be5",
+      "Id": "7131e4d52ad844b99d55e97833738dbf"
+    },
+    {
+      "Start": "d975dd023e5e43bcb3b9ae1abf500edd",
+      "End": "b598121b71264523983e28984c95d582",
+      "Id": "476b10bf8b3f4ae1b9584dc3305d490a"
+    },
+    {
+      "Start": "db7e7aebdb614eacbac5ad512307f08d",
+      "End": "45857f1d435442a4bbfbdd18e023935b",
+      "Id": "d6c6b32c724742dfa8354d1bf57d4367"
+    },
+    {
+      "Start": "db7e7aebdb614eacbac5ad512307f08d",
+      "End": "fb8cddd507214a4e8ecd0ba012a78411",
+      "Id": "73fcc4d2179e4b7fade16ba4f9e46787"
+    },
+    {
+      "Start": "68431271a70f4fb6a30af471e4f3d7dc",
+      "End": "1725e8ea21ce4ea5b26656319521d40a",
+      "Id": "eac0f283a8a843b19b1da25bda276e37"
+    },
+    {
+      "Start": "22830af0b1464fb090b9cd4bb91c6b89",
+      "End": "3d2595012a0e4ffa89c111fdc3182cf5",
+      "Id": "fa9cc54450fc4973a432cdec19db2e12"
+    },
+    {
+      "Start": "22830af0b1464fb090b9cd4bb91c6b89",
+      "End": "3b5891166f0c4ffdac6e3feb917d5572",
+      "Id": "6dd9aebee763438b8d4f9fcc016b994f"
+    },
+    {
+      "Start": "9de96cf70b4042dfb46c832317a920e4",
+      "End": "b0b8d87a7d824ced9d0112493e39af85",
+      "Id": "729b442871de44d7a6e54f2eedfd1430"
+    },
+    {
+      "Start": "5324b7f94e104bcaab5369fc527be0a4",
+      "End": "7fcb330b98e54cb587c6a83adb4f933d",
+      "Id": "96d66f59d8744f55896caa0fc8e3de07"
+    },
+    {
+      "Start": "00a3fefe361a4849954c6ebfcb6f850e",
+      "End": "b4d12e8a83634871ac018f3b6e27f644",
+      "Id": "14c3a171405b416bafaca4b5dc80c51f"
+    },
+    {
+      "Start": "83c4c7bf60dc447eae0f02d8b7fde99c",
+      "End": "371b835ab8cf4c2e9b52d03bb6ca42d5",
+      "Id": "3074d785d06a43e7a15d6308a31be354"
+    },
+    {
+      "Start": "fab7adc9de4d4fa8b529592726d728fa",
+      "End": "b7fdca902e22422a9fc88efee03c13fd",
+      "Id": "2ebee776380644e4894e13ce55de299a"
+    },
+    {
+      "Start": "fb8a1c84a8e54050a4042f8809e53d76",
+      "End": "064f7cf5103b4e0db066ad967f5e254b",
+      "Id": "ffa611d48b4b4ddaa36c62f3bb0573e6"
+    },
+    {
+      "Start": "8a7baebb1d914facb2c37435c422e9b9",
+      "End": "654d1bf467374015bb291ac862d38d04",
+      "Id": "62cd8d7e4be04a2886d4222b781d82be"
+    },
+    {
+      "Start": "04d59861cc0342e79bd13038b0514229",
+      "End": "44cb08272d434694b236cceb087bd771",
+      "Id": "7485d7bc0b9a46e4a1536599cf5b54fd"
+    },
+    {
+      "Start": "1f97174b28f44135a6bf95fc2ab2be8e",
+      "End": "3156ac4c2c2a490f86b2b22f101d3b05",
+      "Id": "9adc6d1b58744ef9b4822a2f9ef9bff0"
+    },
+    {
+      "Start": "dd7c53c6c55f4af890c87c7a898f3983",
+      "End": "1f767d5a2a4f4a68ac42c5e285853372",
+      "Id": "7c701f16689c41a98ec8c2cd8d6a95f8"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.6.1.8786",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "Id": "a7645d3b8dbf4955ac8bf949fc5203d2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "views ",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1018.5165187027709,
+        "Y": 747.98647550070007
+      },
+      {
+        "Id": "ad95a4845a554719b9149046f52b0901",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Element By Id",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1183.521182981005,
+        "Y": 741.86744649853119
+      },
+      {
+        "Id": "5ff779b7145748e7b7ec362b7fa2c4f5",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Watch",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2139.6789481502847,
+        "Y": 879.53017141753912
+      },
+      {
+        "Id": "ec6148591eef4d1190aed9a7393e7573",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "get name",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1410.5343971479572,
+        "Y": 878.63307342495125
+      },
+      {
+        "Id": "609eed3d996d4cfe893e253ea09908cd",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "generate",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1877.3159333313743,
+        "Y": 899.12488417574275
+      },
+      {
+        "Id": "a40983b4e39244a886c4395aac835832",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "name!",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1624.9601216581548,
+        "Y": 925.86699523549839
+      },
+      {
+        "Id": "3a15782a11a348159a18980037505e2f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1845.5626477792821,
+        "Y": 414.23336605868906
+      },
+      {
+        "Id": "f7f252638240434185cedac9e18d159f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1834.3296815968267,
+        "Y": 496.61887422039035
+      },
+      {
+        "Id": "1f74fa50f19a4d0daecdfee542f090af",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "List Create",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2142.0327106012828,
+        "Y": 425.42292764863288
+      },
+      {
+        "Id": "f90605164f47493fb3a2fc05003c9b60",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "working filter example",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2647.0718923879385,
+        "Y": 465.771406111178
+      },
+      {
+        "Id": "e5845ccc1f264c88ae3d67f899c3f1b7",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Python Script",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2688.3333188195334,
+        "Y": 594.69178083493193
+      },
+      {
+        "Id": "ec4c670f7c35438bb9440c5b926cdfed",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "get the names",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2353.6915045778073,
+        "Y": 476.21132876948394
+      },
+      {
+        "Id": "dbc86dc59603452b95a3bd5112dcf83c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1889.4784968257291,
+        "Y": 203.62455897532786
+      },
+      {
+        "Id": "bfcb6a1bb8794237a6766d0081d78a49",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1883.184708075,
+        "Y": 287.0
+      },
+      {
+        "Id": "4ca481bff4f74d27aaba4186aebbfb24",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "String",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2531.7833407352518,
+        "Y": 745.47900800165087
+      },
+      {
+        "Id": "b12204e25ee74eb8a3892a87827a815e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1729.0216939054919,
+        "Y": 1050.4072419174447
+      },
+      {
+        "Id": "0ef5823246634f4892126936f60bc67c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Boolean",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2552.9062772788047,
+        "Y": 853.99018810421944
+      },
+      {
+        "Id": "41438ad560374e309fecf50a9b2f294a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "List Create",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2203.3946178091674,
+        "Y": 707.722658219436
+      },
+      {
+        "Id": "48e909b6c9d645d5be62fcf56bbdd139",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 724.70985069305891,
+        "Y": 656.38344646716462
+      },
+      {
+        "Id": "34f6002b430d4370be1d9a09a4990650",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Watch",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2852.9556323571628,
+        "Y": 595.319267494783
+      },
+      {
+        "Id": "f1e854f540c7436a873d3a1b4944b13f",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Name": "Select Model Element",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 734.28070099545607,
+        "Y": 761.42106315586716
+      }
+    ],
+    "Annotations": [],
+    "X": -686.77873482168184,
+    "Y": -562.70054266727368,
+    "Zoom": 1.1381396892461297
+  }
+}
