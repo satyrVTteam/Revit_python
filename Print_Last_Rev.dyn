@@ -561,12 +561,93 @@
       "Description": "Convert an object to a string representation."
     },
     {
-      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
-      "NodeType": "ExtensionNode",
-      "Id": "e70528e5e87b4e7b8b10f26dd51b384a",
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "if IN[1] == 'success':\r\n\timport sys\r\n\timport clr\r\n\timport os\r\n\timport subprocess\r\n\t\r\n\ttxt2 = str('explorer '+'\"'+str(IN[0])+'\"')\t\r\n\t\r\n\tif bool:\r\n\t\t#subprocess.Popen(txt2)\r\n\t\tos.startfile(IN[0]) #this one do not open explorer again and again\r\n\t\t\t\r\nOUT = 0",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "7bd4db0f0c14419c82815339493b6c52",
       "Inputs": [
         {
-          "Id": "47b5a4c72de548b7a6efb91b741a1189",
+          "Id": "5be167957c1e44ff9a6d391aaf96e092",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "bfed1d8780bc477496ab13e86cd73e18",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1e132eb574b547ab9520e540e7ccda77",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "C:\\Program Files\\Bluebeam Software\\Bluebeam Revu\\Revu\\Revu.exe",
+      "Id": "89291f163f014098af14c0c35d1c550c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "72960c8d1a0043edbcfdff6db3b85c73",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "C:\\Program Files (x86)\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe",
+      "Id": "79a334e940c94f61b2e07e1ac1087c1b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "62c0dc635479432dbf53373833d182d3",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "26b7781adcd0436f9bf999c930a22831",
+      "Inputs": [
+        {
+          "Id": "7c689c10436747079f54d6161ac53efe",
           "Name": "",
           "Description": "Node to evaluate.",
           "UsingDefaultValue": false,
@@ -577,7 +658,7 @@
       ],
       "Outputs": [
         {
-          "Id": "3ba2e4e821fe4555922303cb29869a22",
+          "Id": "39c165a603364bf5876314460bda8bac",
           "Name": "",
           "Description": "Watch contents.",
           "UsingDefaultValue": false,
@@ -592,65 +673,42 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "x = IN[0].split('\\\\')\r\n\r\nline = []\r\ny = x[:-1]\r\nz = []\r\nfor i in y: \r\n\tz.append(i+'\\\\')\r\nline = (''.join(z))\r\n\r\nOUT = line+'Export'",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nimport os\r\nimport subprocess\r\n\r\n#clr.AddReference('ProtoGeometry')\r\n#from Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\n#dataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\n\r\ntxt1 = IN[0]\r\n\r\n#txt1 = 'C:\\1.txt'\r\nbool = IN[1]\r\n\r\n\r\n#SPath = r'C:\\Windows\\System32\\notepad.exe'\r\n\r\n\r\ntry:\r\n\tif bool:\r\n\t\tsubprocess.Popen([IN[2], txt1])\r\n\t\tOUT = 'success'\r\n\r\n\t\t\r\nexcept:\r\n\tif bool:\r\n\t\tsubprocess.Popen([IN[3], txt1])\r\n\t\tOUT = 'success'\r\n\r\n\r\n#subprocess.Popen('explorer \"C:\\temp\"') #itWorks!\r\n# Assign your output to the OUT variable.\r\n",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
-      "Id": "1e46b85068e4454da022bbc6a4317817",
+      "Id": "2126af720eec4a80851389c0ffcc3f2d",
       "Inputs": [
         {
-          "Id": "d371fc30333f4f86b42702b666d66206",
+          "Id": "c9dbeb3e5f654070b29b071e6431248f",
           "Name": "IN[0]",
           "Description": "Input #0",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
           "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
+        },
         {
-          "Id": "c633877074124ca29bd4684239e58c36",
-          "Name": "OUT",
-          "Description": "Result of the python script",
+          "Id": "fe0be51dafa24bd4a599f165e6e54611",
+          "Name": "IN[1]",
+          "Description": "Input #1",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
           "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Runs an embedded Python script."
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "Revit.Application.Document.Current",
-      "Id": "2f30f1054126441491a7f0a047ebbf0d",
-      "Inputs": [],
-      "Outputs": [
+        },
         {
-          "Id": "4174db18adfb4157b467479ae43d4607",
-          "Name": "Document",
-          "Description": "Document",
+          "Id": "4d431461c8544123a4b9b90b8eddbcc4",
+          "Name": "IN[2]",
+          "Description": "Input #2",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
           "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "Get the current document\n\nDocument.Current: Document"
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
-      "NodeType": "FunctionNode",
-      "FunctionSignature": "Revit.Application.Document.FilePath",
-      "Id": "18c56372cc324487be70b85c870bb789",
-      "Inputs": [
+        },
         {
-          "Id": "cbe582ec58704e5cb674b63de9eb060a",
-          "Name": "document",
-          "Description": "Revit.Application.Document",
+          "Id": "ac330031ed204b4fb32715e22ea0e354",
+          "Name": "IN[3]",
+          "Description": "Input #3",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -659,39 +717,7 @@
       ],
       "Outputs": [
         {
-          "Id": "12c7f32763164c33a9d0cdbf2ccf5522",
-          "Name": "string",
-          "Description": "string",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Auto",
-      "Description": "The full path of the Document.\n\nDocument.FilePath: string"
-    },
-    {
-      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
-      "NodeType": "PythonScriptNode",
-      "Code": "x = IN[0].split('\\\\')\r\n\r\nf = x[len(x)-1:]\r\n\r\nm = f[0].split(\".\")\r\n\r\nOUT = m[0]\r\n",
-      "Engine": "IronPython2",
-      "VariableInputPorts": true,
-      "Id": "74a632f9d6f343c6a37ebef534565944",
-      "Inputs": [
-        {
-          "Id": "bd3972017a3e4ce481cb10088b107c00",
-          "Name": "IN[0]",
-          "Description": "Input #0",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "bce0c8969f92433ba33c36e36d37e8d6",
+          "Id": "2056d5934a384dc3b582d8da0feb5504",
           "Name": "OUT",
           "Description": "Result of the python script",
           "UsingDefaultValue": false,
@@ -709,10 +735,10 @@
       "Code": "#Sean Page, 2021\r\nimport clr\r\n\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\nclr.AddReference('System')\r\nfrom System.Collections.Generic import List\r\n\r\nclr.AddReference('RevitNodes')\r\nimport Revit\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\nclr.AddReference('RevitServices')\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\n\r\nSheets = UnwrapElement(IN[0])\r\nNames = IN[1]\r\nFolder = IN[2]\r\nresult = []\r\n\r\nopts = PDFExportOptions()\r\nopts.Combine = True\r\nopts.ColorDepth = ColorDepthType.Color\r\nopts.ExportQuality = PDFExportQualityType.DPI600\r\nopts.PaperFormat = ExportPaperFormat.Default #This will uses the Sheet Size for Paper size\r\nopts.FileName = Names\r\n\r\nsheetSet = List[ElementId]()\r\nfor i in Sheets:       \r\n\tsheetSet.Add(i.Id)\r\n\r\nresult.append(doc.Export(Folder,sheetSet,opts))\r\n\r\nOUT = sheetSet",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
-      "Id": "a48f4e9ac5524e8fa8e951a2177d826f",
+      "Id": "df13b9d90d684cb09f7bfe940e3b9d28",
       "Inputs": [
         {
-          "Id": "57147d9160e049e58c77df0f1324dea0",
+          "Id": "6feb3d4010324f2aaab03a26042d86bd",
           "Name": "IN[0]",
           "Description": "Input #0",
           "UsingDefaultValue": false,
@@ -721,7 +747,7 @@
           "KeepListStructure": false
         },
         {
-          "Id": "8f8bd670dff04fdd8e346f7e6f0373f1",
+          "Id": "c351d479993a4220a2ed762c82048361",
           "Name": "IN[1]",
           "Description": "Input #1",
           "UsingDefaultValue": false,
@@ -730,7 +756,7 @@
           "KeepListStructure": false
         },
         {
-          "Id": "c95f9add42eb4ae5a4f4606e88007022",
+          "Id": "f378e3302b754364b55f405bd6dcdf87",
           "Name": "IN[2]",
           "Description": "Input #2",
           "UsingDefaultValue": false,
@@ -741,7 +767,7 @@
       ],
       "Outputs": [
         {
-          "Id": "34b9fd7511a84585b3dfc70751165123",
+          "Id": "0e24f6cbb1414c758f51dce8a7cf55ac",
           "Name": "OUT",
           "Description": "Result of the python script",
           "UsingDefaultValue": false,
@@ -759,10 +785,10 @@
       "Code": "from datetime import date\r\ntoday = date.today()\r\nOUT = IN[0] + ' ' +today.strftime(\"%d.%m.%y\")",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
-      "Id": "8a1f340265b441209800083b6f3fee6c",
+      "Id": "a75b3f3ed29b43d68a6c365adfd26978",
       "Inputs": [
         {
-          "Id": "431e4e1595434ea4af0dc1cea8e36d28",
+          "Id": "fb9e44ed39bf4cbbb329c8e567c13dfe",
           "Name": "IN[0]",
           "Description": "Input #0",
           "UsingDefaultValue": false,
@@ -773,7 +799,7 @@
       ],
       "Outputs": [
         {
-          "Id": "5dccfe3adf114cd8bda34d7ab7d025b4",
+          "Id": "581503fd476d451dafb66f0f80769e15",
           "Name": "OUT",
           "Description": "Result of the python script",
           "UsingDefaultValue": false,
@@ -786,93 +812,26 @@
       "Description": "Runs an embedded Python script."
     },
     {
-      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
-      "NodeType": "StringInputNode",
-      "InputValue": "C:\\Program Files (x86)\\Adobe\\Acrobat DC\\Acrobat\\Acrobat.exe",
-      "Id": "5b6ce5a73d7a46e796b3282cb0394e2a",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "ff0a65118e394a24b58c6f2eed06ac46",
-          "Name": "",
-          "Description": "String",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Creates a string."
-    },
-    {
-      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
-      "NodeType": "StringInputNode",
-      "InputValue": "C:\\Program Files\\Bluebeam Software\\Bluebeam Revu\\Revu\\Revu.exe",
-      "Id": "f57b4bca190e41b084da6f557f0f7e3f",
-      "Inputs": [],
-      "Outputs": [
-        {
-          "Id": "03437a32893344869a38c1cda3f3f4f6",
-          "Name": "",
-          "Description": "String",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Creates a string."
-    },
-    {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nimport os\r\nimport subprocess\r\n#clr.AddReference('ProtoGeometry')\r\n#from Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\n#dataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\n\r\ntxt1 = IN[0]\r\n#txt1 = 'C:\\1.txt'\r\nbool = IN[1]\r\n\r\n\r\n#SPath = r'C:\\Windows\\System32\\notepad.exe'\r\n\r\n\r\ntry:\r\n\tif bool:\r\n\t\tsubprocess.Popen([IN[2], txt1])\r\nexcept:\r\n\tif bool:\r\n\t\tsubprocess.Popen([IN[3], txt1])\r\n\r\n#subprocess.Popen('explorer \"C:\\temp\"') #itWorks!\r\n# Assign your output to the OUT variable.\r\n#OUT = 0",
+      "Code": "import os\r\n\r\nx = IN[0].split('\\\\')\r\n\r\nline = []\r\ny = x[:-1]\r\nz = []\r\nfor i in y: \r\n\tz.append(i+'\\\\')\r\nline = (''.join(z))\r\n\r\nnewpath = line+'Export'\r\n\r\nif not os.path.exists(newpath):\r\n    os.makedirs(newpath)\r\n    \r\nOUT = newpath",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
-      "Id": "07d0509233324e41a8894997188e79f7",
+      "Id": "3c689cd1df8746c6a765fc5071cb6374",
       "Inputs": [
         {
-          "Id": "03df459c902544ce9a6b779d2ada2f4a",
+          "Id": "4a789deabc0f4cdc9c3c0736d7e6d336",
           "Name": "IN[0]",
           "Description": "Input #0",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
           "KeepListStructure": false
-        },
-        {
-          "Id": "df63282670a1440b9ceb0ccf67e5786f",
-          "Name": "IN[1]",
-          "Description": "Input #1",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "84964e1c160b4c73ac6c6838b6a6fc37",
-          "Name": "IN[2]",
-          "Description": "Input #2",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        },
-        {
-          "Id": "c5302d37531b4760bc7162c16e9705b8",
-          "Name": "IN[3]",
-          "Description": "Input #3",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
         }
       ],
       "Outputs": [
         {
-          "Id": "d7239c55eadb48298d6122cadf847a46",
+          "Id": "10460b8fda374a23ae1c1dac100a67e7",
           "Name": "OUT",
           "Description": "Result of the python script",
           "UsingDefaultValue": false,
@@ -885,16 +844,28 @@
       "Description": "Runs an embedded Python script."
     },
     {
-      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
-      "NodeType": "BooleanInputNode",
-      "InputValue": true,
-      "Id": "4f3a2cb91c81409e8d3577e749736b10",
-      "Inputs": [],
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\r\n\r\nx = IN[0].split('\\\\')\r\n\r\nf = x[len(x)-1:]\r\n\r\ng = f[0].replace(\".pdf\",\"\")\r\n\r\n\r\nOUT = g\r\n",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "ad5ddbf59d5d4790849d25fe75b79ba7",
+      "Inputs": [
+        {
+          "Id": "5f23ad9ce60e4304aa3d1d78a5595d86",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
       "Outputs": [
         {
-          "Id": "e77f599cb788428d8ece42f152d661d2",
-          "Name": "",
-          "Description": "Boolean",
+          "Id": "1bf7f2dfd46b48b2aae4de20dd7103a3",
+          "Name": "OUT",
+          "Description": "Result of the python script",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -902,18 +873,132 @@
         }
       ],
       "Replication": "Disabled",
-      "Description": "Selection between a true and false."
+      "Description": "Runs an embedded Python script."
     },
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "OUT = IN[0] + '\\\\' + IN[1] + \".pdf\"",
+      "Code": "if IN[0]: OUT = True",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
-      "Id": "a320d282376749e7aec6aeb873809874",
+      "Id": "e0971517c8fc4c2ba7e76b626feeeab3",
       "Inputs": [
         {
-          "Id": "852114882eab4b1f8113a44ecb5b6de2",
+          "Id": "27728e08abd340fc841121ad6f84011c",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "02136d7f184446fab2f39ef288baccb3",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "x = IN[0].split('\\\\')\r\n\r\nf = x[len(x)-1:]\r\n\r\nm = f[0].split(\".\")\r\n\r\nOUT = m[0]\r\n",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "86c793fe66674ecd90e4c487bb0676fd",
+      "Inputs": [
+        {
+          "Id": "e15dcd1fd3c24883876c91b1a0a2f806",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "cc154c09642a43c0bcb5f761d3d8f4be",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Application.Document.FilePath",
+      "Id": "ea67db272ae244429a6507b188ea0486",
+      "Inputs": [
+        {
+          "Id": "08e28c4e18d34546894a96005413d411",
+          "Name": "document",
+          "Description": "Revit.Application.Document",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "421a47cee6a74de2844ec2f1aaeea8cb",
+          "Name": "string",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "The full path of the Document.\n\nDocument.FilePath: string"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Application.Document.Current",
+      "Id": "fa0f55217e1649a3a68da5d80376b9b4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "7ccfe14c7bc0464da52b612a507cd0a4",
+          "Name": "Document",
+          "Description": "Document",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Get the current document\n\nDocument.Current: Document"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import os\r\n\r\nname = IN[0] + '\\\\' + IN[1] + \".pdf\"\r\n\r\nif os.path.exists(name) == False: \r\n\tOUT = name\r\nelse:\r\n\tname = IN[0] + '\\\\' + IN[1] + \" v2.pdf\"\r\n\tif os.path.exists(name) == False: \r\n\t\tOUT = name \r\n\telse:\r\n\t\tname = IN[0] + '\\\\' + IN[1] + \" v3.pdf\"\r\n\t\tif os.path.exists(name) == False: \r\n\t\t\tOUT = name\r\n\t\telse:\r\n\t\t\tname = IN[0] + '\\\\' + IN[1] + \" v4.pdf\"\t\t\r\n\t\t\tif os.path.exists(name) == False: \r\n\t\t\t\tOUT = name\r\n\t\t\telse:\r\n\t\t\t\tname = IN[0] + '\\\\' + IN[1] + \" v5.pdf\"\r\n\t\t\t\tif os.path.exists(name) == False: \r\n\t\t\t\t\tOUT = name\r\n\t\t\t\telse:\r\n\t\t\t\t\tname = IN[0] + '\\\\' + IN[1] + \" v6.pdf\"\r\n\t\t\t\t\tif os.path.exists(name) == False: \r\n\t\t\t\t\t\tOUT = name\r\n\t\t\t\t\telse:\r\n\t\t\t\t\t\tname = IN[0] + '\\\\' + IN[1] + \" v7.pdf\"\t\t\r\n\t\t\t\t\t\tif os.path.exists(name) == False: \r\n\t\t\t\t\t\t\tOUT = name\r\n\t\t\t\t\t\telse:\r\n\t\t\t\t\t\t\tname = IN[0] + '\\\\' + IN[1] + \" v8.pdf\"\t\r\n\t\t\t\t\t\t\tif os.path.exists(name) == False: \r\n\t\t\t\t\t\t\t\tOUT = name\r\n\t\t\t\t\t\t\telse:\r\n\t\t\t\t\t\t\t\tname = IN[0] + '\\\\' + IN[1] + \" v9.pdf\"\t\t\r\n\t\t\t\t\t\t\t\tif os.path.exists(name) == False: \r\n\t\t\t\t\t\t\t\t\tOUT = name\r\n\t\t\t\t\t\t\t\telse:\r\n\t\t\t\t\t\t\t\t\tname = IN[0] + '\\\\' + IN[1] + \" v10.pdf\"\t\r\n\t\t\t\t\t\t\t\t\tif os.path.exists(name) == False: \r\n\t\t\t\t\t\t\t\t\t\tOUT = name\r\n\t\t\t\t\t\t\t\t\telse:\r\n\t\t\t\t\t\t\t\t\t\tname = IN[0] + '\\\\' + IN[1] + \" v11.pdf\"\t\r\n\t\t\t\t\t\t\t\t\t\tif os.path.exists(name) == False: \r\n\t\t\t\t\t\t\t\t\t\t\tOUT = name\r\n\t\t\t\t\t\t\t\t\t\telse:\r\n\t\t\t\t\t\t\t\t\t\t\tname = IN[0] + '\\\\' + IN[1] + \" v12.pdf\"\t\r\n\t\t\t\t\t\t\t\t\t\t\tOUT = name\t\t\t\t\t\t\t\t\t\t\t",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "a59e0ff64baa46fea2b2f62651a2bf2e",
+      "Inputs": [
+        {
+          "Id": "e43da92badf44cfc80d69a4dd0b4417d",
           "Name": "IN[0]",
           "Description": "Input #0",
           "UsingDefaultValue": false,
@@ -922,7 +1007,7 @@
           "KeepListStructure": false
         },
         {
-          "Id": "cdcc03f7726443988231c0245773625d",
+          "Id": "45832361a8b749018252a67d97cd43fb",
           "Name": "IN[1]",
           "Description": "Input #1",
           "UsingDefaultValue": false,
@@ -933,7 +1018,39 @@
       ],
       "Outputs": [
         {
-          "Id": "41265b9d92cc4aea82e9b95a2357dd11",
+          "Id": "4dcbe4bba1894ea7af7720dd700dcfed",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "\r\n\r\ninput = IN[0]\r\nelements = []\r\n\r\nif isinstance(input, list): \r\n\tfor i in input:\telements.append(i)\r\nelse: elements = [input]\r\n\t\t\r\nOUT = elements",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "dd5d2e8a17d442b3bc7aff33003677a6",
+      "Inputs": [
+        {
+          "Id": "06e9cb758482463a94577631901467f0",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b17a4c55462049b194520deaa1d09ab6",
           "Name": "OUT",
           "Description": "Result of the python script",
           "UsingDefaultValue": false,
@@ -969,8 +1086,8 @@
     },
     {
       "Start": "df6f5dd5e6ff467f83644d72d747915d",
-      "End": "57147d9160e049e58c77df0f1324dea0",
-      "Id": "2b5b625890d44488803130321c65d02e"
+      "End": "6feb3d4010324f2aaab03a26042d86bd",
+      "Id": "5f134f53e5c24567ba5ab06ca3edb346"
     },
     {
       "Start": "6f6206adc62543c7958f9969ee821892",
@@ -994,8 +1111,8 @@
     },
     {
       "Start": "fd0b5f142d9a44e4a915f45b6f4c8107",
-      "End": "ef08472bed7f4f6b96452f588ae762b3",
-      "Id": "312122dd5ae14f3d82e14d24ba69bbe8"
+      "End": "06e9cb758482463a94577631901467f0",
+      "Id": "bf394f5dec004ae08e25f485cc00a8a3"
     },
     {
       "Start": "fe6c84e31812479eaa25474886e73558",
@@ -1048,69 +1165,94 @@
       "Id": "791dc3c933c94f70b478f48906415f38"
     },
     {
-      "Start": "3ba2e4e821fe4555922303cb29869a22",
-      "End": "c95f9add42eb4ae5a4f4606e88007022",
-      "Id": "df06d80f2c86426ba865b299b5d84cd6"
+      "Start": "72960c8d1a0043edbcfdff6db3b85c73",
+      "End": "ac330031ed204b4fb32715e22ea0e354",
+      "Id": "e3870e8c5454491f8ba35aa83ff816ea"
     },
     {
-      "Start": "c633877074124ca29bd4684239e58c36",
-      "End": "47b5a4c72de548b7a6efb91b741a1189",
-      "Id": "537adfcb28ed4d8a92ad8d8c09831cf6"
+      "Start": "62c0dc635479432dbf53373833d182d3",
+      "End": "4d431461c8544123a4b9b90b8eddbcc4",
+      "Id": "9fc9eaf470914aee92b277f25f947a8a"
     },
     {
-      "Start": "c633877074124ca29bd4684239e58c36",
-      "End": "852114882eab4b1f8113a44ecb5b6de2",
-      "Id": "60d6f77a2ed0464e96b4fb03e41e72b2"
+      "Start": "39c165a603364bf5876314460bda8bac",
+      "End": "5be167957c1e44ff9a6d391aaf96e092",
+      "Id": "5bddc6e3a36847d89439ef2a11282a3c"
     },
     {
-      "Start": "4174db18adfb4157b467479ae43d4607",
-      "End": "cbe582ec58704e5cb674b63de9eb060a",
-      "Id": "1e812f9dd58a4b6482c356b526ed6cac"
+      "Start": "39c165a603364bf5876314460bda8bac",
+      "End": "f378e3302b754364b55f405bd6dcdf87",
+      "Id": "dc77e0e13d7d4503be835e579b549656"
     },
     {
-      "Start": "12c7f32763164c33a9d0cdbf2ccf5522",
-      "End": "d371fc30333f4f86b42702b666d66206",
-      "Id": "e7152211c9494ef9be203bac8f0508ea"
+      "Start": "39c165a603364bf5876314460bda8bac",
+      "End": "e43da92badf44cfc80d69a4dd0b4417d",
+      "Id": "46b58c9be01b4f6fb613c70065897f76"
     },
     {
-      "Start": "12c7f32763164c33a9d0cdbf2ccf5522",
-      "End": "bd3972017a3e4ce481cb10088b107c00",
-      "Id": "d8e03dd3f4f640b5ae10e183c7b8f89d"
+      "Start": "2056d5934a384dc3b582d8da0feb5504",
+      "End": "bfed1d8780bc477496ab13e86cd73e18",
+      "Id": "b3647e09dd2647a49a8bab837c57b721"
     },
     {
-      "Start": "bce0c8969f92433ba33c36e36d37e8d6",
-      "End": "431e4e1595434ea4af0dc1cea8e36d28",
-      "Id": "0ab326cb06644325916eb58ab5affe23"
+      "Start": "0e24f6cbb1414c758f51dce8a7cf55ac",
+      "End": "27728e08abd340fc841121ad6f84011c",
+      "Id": "ff34366511424357b6601f8686a290b2"
     },
     {
-      "Start": "5dccfe3adf114cd8bda34d7ab7d025b4",
-      "End": "8f8bd670dff04fdd8e346f7e6f0373f1",
-      "Id": "e9bb76c2cfcc46a69a8ee6398f2cc9f9"
+      "Start": "581503fd476d451dafb66f0f80769e15",
+      "End": "45832361a8b749018252a67d97cd43fb",
+      "Id": "c7d58584a41f41a4810ecb3fd17e9de9"
     },
     {
-      "Start": "5dccfe3adf114cd8bda34d7ab7d025b4",
-      "End": "cdcc03f7726443988231c0245773625d",
-      "Id": "2290b10d84bc44d3aef74919e7408e61"
+      "Start": "10460b8fda374a23ae1c1dac100a67e7",
+      "End": "7c689c10436747079f54d6161ac53efe",
+      "Id": "0f19a6a9b57e40148f18ea377ad31ae3"
     },
     {
-      "Start": "ff0a65118e394a24b58c6f2eed06ac46",
-      "End": "84964e1c160b4c73ac6c6838b6a6fc37",
-      "Id": "3ba8c059ce7249d98151e6631b67e4c3"
+      "Start": "1bf7f2dfd46b48b2aae4de20dd7103a3",
+      "End": "c351d479993a4220a2ed762c82048361",
+      "Id": "cde7520c8e004f28a531871f0042fa9c"
     },
     {
-      "Start": "03437a32893344869a38c1cda3f3f4f6",
-      "End": "c5302d37531b4760bc7162c16e9705b8",
-      "Id": "8effd484cee74775978ec86a334596f0"
+      "Start": "02136d7f184446fab2f39ef288baccb3",
+      "End": "fe0be51dafa24bd4a599f165e6e54611",
+      "Id": "bbe4c1f8577d428bade876083732e2ee"
     },
     {
-      "Start": "e77f599cb788428d8ece42f152d661d2",
-      "End": "df63282670a1440b9ceb0ccf67e5786f",
-      "Id": "c10a14c8248547b9848e74983e55db10"
+      "Start": "cc154c09642a43c0bcb5f761d3d8f4be",
+      "End": "fb9e44ed39bf4cbbb329c8e567c13dfe",
+      "Id": "b72634e32eb346f9b99771624f88eadc"
     },
     {
-      "Start": "41265b9d92cc4aea82e9b95a2357dd11",
-      "End": "03df459c902544ce9a6b779d2ada2f4a",
-      "Id": "c5b1a5b9a8264275a96d5481f89eb2c3"
+      "Start": "421a47cee6a74de2844ec2f1aaeea8cb",
+      "End": "4a789deabc0f4cdc9c3c0736d7e6d336",
+      "Id": "5bdcfcdf14f748c8a62c69c2c4815b33"
+    },
+    {
+      "Start": "421a47cee6a74de2844ec2f1aaeea8cb",
+      "End": "e15dcd1fd3c24883876c91b1a0a2f806",
+      "Id": "3208789db58a49fd99063c02a1f5b12d"
+    },
+    {
+      "Start": "7ccfe14c7bc0464da52b612a507cd0a4",
+      "End": "08e28c4e18d34546894a96005413d411",
+      "Id": "d4bd0f2937e4434c83007c56004d6db6"
+    },
+    {
+      "Start": "4dcbe4bba1894ea7af7720dd700dcfed",
+      "End": "c9dbeb3e5f654070b29b071e6431248f",
+      "Id": "b10d109d5887426b8b6ce42a8fd5dfa0"
+    },
+    {
+      "Start": "4dcbe4bba1894ea7af7720dd700dcfed",
+      "End": "5f23ad9ce60e4304aa3d1d78a5595d86",
+      "Id": "65a2f32535ef48f58a1ce082d07268b8"
+    },
+    {
+      "Start": "b17a4c55462049b194520deaa1d09ab6",
+      "End": "ef08472bed7f4f6b96452f588ae762b3",
+      "Id": "d21097aa6fae4320a761c3e92a21b926"
     }
   ],
   "Dependencies": [],
@@ -1175,8 +1317,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 2743.7784911289359,
-        "Y": 382.2277709632948
+        "X": 2993.7203493043862,
+        "Y": 481.54241659592395
       },
       {
         "ShowGeometry": true,
@@ -1300,128 +1442,158 @@
       },
       {
         "ShowGeometry": true,
+        "Name": "Folder open",
+        "Id": "7bd4db0f0c14419c82815339493b6c52",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 5106.9763097011419,
+        "Y": 1093.67223226819
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "89291f163f014098af14c0c35d1c550c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4532.433508968883,
+        "Y": 1046.5454990140302
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "79a334e940c94f61b2e07e1ac1087c1b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4539.8082468247321,
+        "Y": 966.76518607389016
+      },
+      {
+        "ShowGeometry": true,
         "Name": "Watch",
-        "Id": "e70528e5e87b4e7b8b10f26dd51b384a",
+        "Id": "26b7781adcd0436f9bf999c930a22831",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3398.9423746897269,
-        "Y": 776.79637337367012
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "folder",
-        "Id": "1e46b85068e4454da022bbc6a4317817",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3111.5403263975945,
-        "Y": 839.62374504332138
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Document.Current",
-        "Id": "2f30f1054126441491a7f0a047ebbf0d",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 2407.5035479302182,
-        "Y": 863.36280507053641
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "Document.FilePath",
-        "Id": "18c56372cc324487be70b85c870bb789",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 2591.8859249701095,
-        "Y": 859.70011122749645
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "folder",
-        "Id": "74a632f9d6f343c6a37ebef534565944",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 2997.1719850537961,
-        "Y": 675.85261947210927
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "PDF print",
-        "Id": "a48f4e9ac5524e8fa8e951a2177d826f",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3687.8678138470373,
-        "Y": 530.48281348438013
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "current date",
-        "Id": "8a1f340265b441209800083b6f3fee6c",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 3335.9190788708611,
-        "Y": 599.96909290501594
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "String",
-        "Id": "5b6ce5a73d7a46e796b3282cb0394e2a",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 4061.5523096344086,
-        "Y": 342.39852535773861
-      },
-      {
-        "ShowGeometry": true,
-        "Name": "String",
-        "Id": "f57b4bca190e41b084da6f557f0f7e3f",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 4055.0518631986388,
-        "Y": 432.12643045237877
+        "X": 3865.240931942772,
+        "Y": 1094.16915548329
       },
       {
         "ShowGeometry": true,
         "Name": "File open",
-        "Id": "07d0509233324e41a8894997188e79f7",
+        "Id": "2126af720eec4a80851389c0ffcc3f2d",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 4379.4772916313086,
-        "Y": 195.91588256558879
+        "X": 4904.4859128063217,
+        "Y": 825.93464955080026
       },
       {
         "ShowGeometry": true,
-        "Name": "Boolean",
-        "Id": "4f3a2cb91c81409e8d3577e749736b10",
+        "Name": "PDF print",
+        "Id": "df13b9d90d684cb09f7bfe940e3b9d28",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 4147.5342137053194,
-        "Y": 269.35492722059865
+        "X": 4277.7607959976121,
+        "Y": 822.2843352703801
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "+current date",
+        "Id": "a75b3f3ed29b43d68a6c365adfd26978",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3714.3853754023826,
+        "Y": 876.26302057188013
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "export folder",
+        "Id": "3c689cd1df8746c6a765fc5071cb6374",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3657.4349253049327,
+        "Y": 1090.31871229151
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "name only",
+        "Id": "ad5ddbf59d5d4790849d25fe75b79ba7",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4057.1964011611531,
+        "Y": 847.19699452294026
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "flow check",
+        "Id": "e0971517c8fc4c2ba7e76b626feeeab3",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4569.6419951589123,
+        "Y": 849.64137571561014
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "folder",
+        "Id": "86c793fe66674ecd90e4c487bb0676fd",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3534.1424632682124,
+        "Y": 925.09239550679013
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Document.FilePath",
+        "Id": "ea67db272ae244429a6507b188ea0486",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3224.4458901651028,
+        "Y": 1035.2168296802301
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "Document.Current",
+        "Id": "fa0f55217e1649a3a68da5d80376b9b4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 3040.0635131252025,
+        "Y": 1038.87952352327
       },
       {
         "ShowGeometry": true,
         "Name": "file name",
-        "Id": "a320d282376749e7aec6aeb873809874",
+        "Id": "a59e0ff64baa46fea2b2f62651a2bf2e",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 3494.4231008187189,
-        "Y": 250.41209488398857
+        "X": 3983.1627597336424,
+        "Y": 571.7718828962702
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "input check",
+        "Id": "dd5d2e8a17d442b3bc7aff33003677a6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 2646.3179743360888,
+        "Y": 422.9340263618314
       }
     ],
     "Annotations": [],
-    "X": -1964.3462754146685,
-    "Y": 99.60018822873127,
-    "Zoom": 0.72246781178812425
+    "X": -3080.7326625140868,
+    "Y": -299.05486174076009,
+    "Zoom": 0.89091757952469508
   }
 }

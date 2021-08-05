@@ -309,7 +309,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "import clr\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\nimport System\nfrom System.Collections.Generic import *\nfrom System.Collections.Generic import List\n\ndoc=DocumentManager.Instance.CurrentDBDocument\napp=DocumentManager.Instance.CurrentUIApplication.Application\n#First construct an ICollection of StructuralFraming and Structural Column Categories:\n\nbeamcolumncatlist=[]\nfor i in IN[0]:\n\tbeamcolumncatlist.append(ElementId(i))\niCollBeamColumnCats=List[ElementId](beamcolumncatlist)\n#Next get the parameters you will be testing on (in this case the Comments parameter and the Family Name):\n\n\npFamName=ParameterValueProvider(ElementId(getattr(BuiltInParameter,IN[3])))\n#Next construct the Filter Rules/Tests on those parameters:\n\nxFamName1=FilterInverseRule(FilterStringRule(pFamName,FilterStringEquals(),IN[2][0],False))\nxFamName2=FilterInverseRule(FilterStringRule(pFamName,FilterStringEquals(),IN[2][1],False))\n\n#Now construct the actual filter (ParameterFilterElement) - note that this must occur inside a transaction:\n\nTransactionManager.Instance.EnsureInTransaction(doc)\n##Make an ICollection of the “Blue” and “Steel” filter tests, then use that ICollection to construct an AND filter set.\n\nbeamcolumnfilt1=[]\nbeamcolumnfilt1.Add(ElementParameterFilter(xFamName1))\nbeamcolumnfilt1.Add(ElementParameterFilter(xFamName2))\n\nicolbeamcolumnfilt1=List[ElementFilter](beamcolumnfilt1)\nandbeamcolumnfilt1=LogicalOrFilter(icolbeamcolumnfilt1)\n##Now make an ICollection of the “Magnum” tests and the previous AND of “Blue”+“Steel”, then use that ICollection to construct an OR filter set.\n\n\n##Now construct a ParameterFilterElement called “ZoolanderBeamsColumns” using the previously defined beam and column category ICollection and the OR ElementParameterFilter.\n\nif IN[4] == True:\n\tpfebeamcolelem=ParameterFilterElement.Create(doc,IN[1],iCollBeamColumnCats,andbeamcolumnfilt1)\n\tTransactionManager.Instance.TransactionTaskDone()\n\tOUT = IN[2]\nelse: OUT = \"feed TRUE to IN[4]\"\n\n",
+      "Code": "import clr\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\nimport System\nfrom System.Collections.Generic import *\nfrom System.Collections.Generic import List\n\ndoc=DocumentManager.Instance.CurrentDBDocument\napp=DocumentManager.Instance.CurrentUIApplication.Application\n#First construct an ICollection of StructuralFraming and Structural Column Categories:\n\nbeamcolumncatlist=[]\nfor i in IN[0]:\n\tbeamcolumncatlist.append(ElementId(i))\niCollBeamColumnCats=List[ElementId](beamcolumncatlist)\n#Next get the parameters you will be testing on (in this case the Comments parameter and the Family Name):\n\n\npFamName=ParameterValueProvider(ElementId(getattr(BuiltInParameter,IN[3])))\n#Next construct the Filter Rules/Tests on those parameters:\n\nxFamName1=FilterInverseRule(FilterStringRule(pFamName,FilterStringEquals(),IN[2][0],False))\nxFamName2=FilterInverseRule(FilterStringRule(pFamName,FilterStringEquals(),IN[2][1],False))\n\n#Now construct the actual filter (ParameterFilterElement) - note that this must occur inside a transaction:\n\nTransactionManager.Instance.EnsureInTransaction(doc)\n##Make an ICollection of the “Blue” and “Steel” filter tests, then use that ICollection to construct an AND filter set.\n\nbeamcolumnfilt1=[]\nbeamcolumnfilt1.Add(ElementParameterFilter(xFamName1))\nbeamcolumnfilt1.Add(ElementParameterFilter(xFamName2))\n\nicolbeamcolumnfilt1=List[ElementFilter](beamcolumnfilt1)\nandbeamcolumnfilt1=LogicalOrFilter(icolbeamcolumnfilt1)\n##Now make an ICollection of the “Magnum” tests and the previous AND of “Blue”+“Steel”, then use that ICollection to construct an OR filter set.\n\n\n##Now construct a ParameterFilterElement called “ZoolanderBeamsColumns” using the previously defined beam and column category ICollection and the OR ElementParameterFilter.\ntry:\n\tif IN[4] == True:\n\t\tpfebeamcolelem=ParameterFilterElement.Create(doc,IN[1],iCollBeamColumnCats,andbeamcolumnfilt1)\n\t\tTransactionManager.Instance.TransactionTaskDone()\n\t\tOUT = \"Filter \" + IN[1] +  \" has been successfully created\"\n\telse: OUT = \"feed TRUE to IN[4]\"\n\t\nexcept: \n\n\tOUT = \"Filter \" + IN[1] +  \" already exists\"\n\t\n",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
       "Id": "e5845ccc1f264c88ae3d67f899c3f1b7",
@@ -607,7 +607,9 @@
     {
       "ConcreteType": "Dynamo.Nodes.DSModelElementSelection, DSRevitNodesUI",
       "NodeType": "ExtensionNode",
-      "InstanceId": [],
+      "InstanceId": [
+        "9b223495-4ac8-4dcb-ab06-676527563646-00ac385e"
+      ],
       "Id": "f1e854f540c7436a873d3a1b4944b13f",
       "Inputs": [],
       "Outputs": [
@@ -642,6 +644,38 @@
       ],
       "Replication": "Disabled",
       "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "#This script pops up a dialog box with a message from the previous node.\r\nimport clr\r\nclr.AddReference('RevitAPIUI')\r\n\r\nfrom Autodesk.Revit.UI import TaskDialog\r\n\r\n\r\nmainText = IN[0]\r\n\r\nif mainText != None and mainText != \"null\"  :\r\n\tmessagePop = TaskDialog(\"Dynamo Player\")\r\n\tmessagePop.MainContent = mainText\r\n\t\r\n\tOUT = \"Success!\"\r\n\t\r\n\tmessagePop.Show()",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "d3ef94c3db9f46888ed04021b748303d",
+      "Inputs": [
+        {
+          "Id": "0f01beca059a4fd9a4e82254fb5e8240",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b8b6a651d7804b38a0316da61ca4e490",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
     }
   ],
   "Connectors": [
@@ -731,6 +765,11 @@
       "Id": "9adc6d1b58744ef9b4822a2f9ef9bff0"
     },
     {
+      "Start": "a3ccf3cb5e3e4b5fa222be25dfc03955",
+      "End": "0f01beca059a4fd9a4e82254fb5e8240",
+      "Id": "95e2fdaeb93b4cc78e5ccb5f047c6f3f"
+    },
+    {
       "Start": "dd7c53c6c55f4af890c87c7a898f3983",
       "End": "1f767d5a2a4f4a68ac42c5e285853372",
       "Id": "7c701f16689c41a98ec8c2cd8d6a95f8"
@@ -762,229 +801,239 @@
     },
     "NodeViews": [
       {
-        "ShowGeometry": true,
-        "Name": "views ",
         "Id": "a7645d3b8dbf4955ac8bf949fc5203d2",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "views ",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1018.5165187027709,
         "Y": 747.98647550070007
       },
       {
-        "ShowGeometry": true,
-        "Name": "Element By Id",
         "Id": "ad95a4845a554719b9149046f52b0901",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Element By Id",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1183.521182981005,
         "Y": 741.86744649853119
       },
       {
-        "ShowGeometry": true,
-        "Name": "Watch",
         "Id": "5ff779b7145748e7b7ec362b7fa2c4f5",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Watch",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 2139.6789481502847,
         "Y": 879.53017141753912
       },
       {
-        "ShowGeometry": true,
-        "Name": "get name",
         "Id": "ec6148591eef4d1190aed9a7393e7573",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "get name",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1410.5343971479572,
         "Y": 878.63307342495125
       },
       {
-        "ShowGeometry": true,
-        "Name": "generate",
         "Id": "609eed3d996d4cfe893e253ea09908cd",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "generate",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1877.3159333313743,
         "Y": 899.12488417574275
       },
       {
-        "ShowGeometry": true,
-        "Name": "name!",
         "Id": "a40983b4e39244a886c4395aac835832",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "name!",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1624.9601216581548,
         "Y": 925.86699523549839
       },
       {
-        "ShowGeometry": true,
-        "Name": "Code Block",
         "Id": "3a15782a11a348159a18980037505e2f",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1845.5626477792821,
         "Y": 414.23336605868906
       },
       {
-        "ShowGeometry": true,
-        "Name": "Code Block",
         "Id": "f7f252638240434185cedac9e18d159f",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1834.3296815968267,
         "Y": 496.61887422039035
       },
       {
-        "ShowGeometry": true,
-        "Name": "List Create",
         "Id": "1f74fa50f19a4d0daecdfee542f090af",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "List Create",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 2142.0327106012828,
         "Y": 425.42292764863288
       },
       {
-        "ShowGeometry": true,
-        "Name": "working filter example",
         "Id": "f90605164f47493fb3a2fc05003c9b60",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "working filter example",
+        "ShowGeometry": true,
         "Excluded": false,
-        "X": 2647.0718923879385,
-        "Y": 465.771406111178
+        "X": 2899.3765465017414,
+        "Y": 392.49729997633119
       },
       {
-        "ShowGeometry": true,
-        "Name": "Python Script",
         "Id": "e5845ccc1f264c88ae3d67f899c3f1b7",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Python Script",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 2688.3333188195334,
         "Y": 594.69178083493193
       },
       {
-        "ShowGeometry": true,
-        "Name": "get the names",
         "Id": "ec4c670f7c35438bb9440c5b926cdfed",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "get the names",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 2353.6915045778073,
         "Y": 476.21132876948394
       },
       {
-        "ShowGeometry": true,
-        "Name": "Code Block",
         "Id": "dbc86dc59603452b95a3bd5112dcf83c",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1889.4784968257291,
         "Y": 203.62455897532786
       },
       {
-        "ShowGeometry": true,
-        "Name": "Code Block",
         "Id": "bfcb6a1bb8794237a6766d0081d78a49",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1883.184708075,
         "Y": 287.0
       },
       {
-        "ShowGeometry": true,
-        "Name": "String",
         "Id": "4ca481bff4f74d27aaba4186aebbfb24",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "String",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 2531.7833407352518,
         "Y": 745.47900800165087
       },
       {
-        "ShowGeometry": true,
-        "Name": "Code Block",
         "Id": "b12204e25ee74eb8a3892a87827a815e",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 1729.0216939054919,
         "Y": 1050.4072419174447
       },
       {
-        "ShowGeometry": true,
-        "Name": "Boolean",
         "Id": "0ef5823246634f4892126936f60bc67c",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Boolean",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 2552.9062772788047,
         "Y": 853.99018810421944
       },
       {
-        "ShowGeometry": true,
-        "Name": "List Create",
         "Id": "41438ad560374e309fecf50a9b2f294a",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "List Create",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 2203.3946178091674,
         "Y": 707.722658219436
       },
       {
-        "ShowGeometry": true,
-        "Name": "Code Block",
         "Id": "48e909b6c9d645d5be62fcf56bbdd139",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 724.70985069305891,
         "Y": 653.74756615445256
       },
       {
-        "ShowGeometry": true,
-        "Name": "Watch",
         "Id": "34f6002b430d4370be1d9a09a4990650",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Watch",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 2852.9556323571628,
         "Y": 595.319267494783
       },
       {
-        "ShowGeometry": true,
-        "Name": "Select Model Element",
         "Id": "f1e854f540c7436a873d3a1b4944b13f",
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
+        "Name": "Select Model Element",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 734.28070099545607,
         "Y": 761.42106315586716
       },
       {
-        "ShowGeometry": true,
-        "Name": "Code Block",
         "Id": "9bae6954bebe49d98b6a650496556411",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
         "Excluded": false,
         "X": 652.49657222948576,
         "Y": 556.89020562422161
+      },
+      {
+        "Id": "d3ef94c3db9f46888ed04021b748303d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "pop up message",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 3197.8163110559672,
+        "Y": 604.28902202933671
       }
     ],
     "Annotations": [],
-    "X": -556.77873482168184,
-    "Y": -310.70054266727368,
-    "Zoom": 1.1381396892461297
+    "X": -2048.2835344559794,
+    "Y": -291.75605756133547,
+    "Zoom": 0.863578302798034
   }
 }
