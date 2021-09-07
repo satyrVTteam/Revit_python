@@ -12,7 +12,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\n\r\nx = UnwrapElement (IN[0])\r\n\r\n\r\nif type(IN[0]) is list:\r\n\tviews = []\r\n\tfor i in x:\tviews.append(i.ViewId)\t\r\nelse:\r\n\tviews = x.ViewId\r\n\r\nOUT = views",
+      "Code": "import clr\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\n\r\n\r\nx = UnwrapElement (IN[0])\r\n\r\ntry:\r\n\tif type(IN[0]) is list:\r\n\t\tviews = []\r\n\t\tfor i in x:\tviews.append(i.ViewId)\t\r\n\telse:\r\n\t\tviews = x.ViewId\r\n\r\nexcept:\r\n\tif type(IN[0]) is list:\r\n\t\tviews = []\r\n\t\tfor i in x:\tviews.append(i.Id)\t\r\n\telse:\r\n\t\tviews = x.Id\r\n\r\n\r\nOUT = views",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
       "Id": "a7645d3b8dbf4955ac8bf949fc5203d2",
@@ -309,7 +309,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "import clr\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\nimport System\nfrom System.Collections.Generic import *\nfrom System.Collections.Generic import List\n\ndoc=DocumentManager.Instance.CurrentDBDocument\napp=DocumentManager.Instance.CurrentUIApplication.Application\n#First construct an ICollection of StructuralFraming and Structural Column Categories:\n\nbeamcolumncatlist=[]\nfor i in IN[0]:\n\tbeamcolumncatlist.append(ElementId(i))\niCollBeamColumnCats=List[ElementId](beamcolumncatlist)\n#Next get the parameters you will be testing on (in this case the Comments parameter and the Family Name):\n\n\npFamName=ParameterValueProvider(ElementId(getattr(BuiltInParameter,IN[3])))\n#Next construct the Filter Rules/Tests on those parameters:\n\nxFamName1=FilterInverseRule(FilterStringRule(pFamName,FilterStringEquals(),IN[2][0],False))\nxFamName2=FilterInverseRule(FilterStringRule(pFamName,FilterStringEquals(),IN[2][1],False))\n\n#Now construct the actual filter (ParameterFilterElement) - note that this must occur inside a transaction:\n\nTransactionManager.Instance.EnsureInTransaction(doc)\n##Make an ICollection of the “Blue” and “Steel” filter tests, then use that ICollection to construct an AND filter set.\n\nbeamcolumnfilt1=[]\nbeamcolumnfilt1.Add(ElementParameterFilter(xFamName1))\nbeamcolumnfilt1.Add(ElementParameterFilter(xFamName2))\n\nicolbeamcolumnfilt1=List[ElementFilter](beamcolumnfilt1)\nandbeamcolumnfilt1=LogicalOrFilter(icolbeamcolumnfilt1)\n##Now make an ICollection of the “Magnum” tests and the previous AND of “Blue”+“Steel”, then use that ICollection to construct an OR filter set.\n\n\n##Now construct a ParameterFilterElement called “ZoolanderBeamsColumns” using the previously defined beam and column category ICollection and the OR ElementParameterFilter.\ntry:\n\tif IN[4] == True:\n\t\tpfebeamcolelem=ParameterFilterElement.Create(doc,IN[1],iCollBeamColumnCats,andbeamcolumnfilt1)\n\t\tTransactionManager.Instance.TransactionTaskDone()\n\t\tOUT = \"Filter \" + IN[1] +  \" has been successfully created\"\n\telse: OUT = \"feed TRUE to IN[4]\"\n\t\nexcept: \n\n\tOUT = \"Filter \" + IN[1] +  \" already exists\"\n\t\n",
+      "Code": "import clr\n\nclr.AddReference(\"RevitServices\")\nimport RevitServices\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\nclr.AddReference(\"RevitAPI\")\nimport Autodesk\nfrom Autodesk.Revit.DB import *\nimport System\nfrom System.Collections.Generic import *\nfrom System.Collections.Generic import List\n\ndoc=DocumentManager.Instance.CurrentDBDocument\napp=DocumentManager.Instance.CurrentUIApplication.Application\n#First construct an ICollection of StructuralFraming and Structural Column Categories:\n\nbeamcolumncatlist=[]\nfor i in IN[0]:\n\tbeamcolumncatlist.append(ElementId(i))\niCollBeamColumnCats=List[ElementId](beamcolumncatlist)\n#Next get the parameters you will be testing on (in this case the Comments parameter and the Family Name):\n\n\npFamName=ParameterValueProvider(ElementId(getattr(BuiltInParameter,IN[3])))\n#Next construct the Filter Rules/Tests on those parameters:\n\nxFamName1=FilterInverseRule(FilterStringRule(pFamName,FilterStringContains(),IN[2][0],False))\n#xFamName2=FilterInverseRule(FilterStringRule(pFamName,FilterStringContains(),IN[2][1],False))\n\n#Now construct the actual filter (ParameterFilterElement) - note that this must occur inside a transaction:\n\nTransactionManager.Instance.EnsureInTransaction(doc)\n##Make an ICollection of the “Blue” and “Steel” filter tests, then use that ICollection to construct an AND filter set.\n\nbeamcolumnfilt1=[]\nbeamcolumnfilt1.Add(ElementParameterFilter(xFamName1))\n#beamcolumnfilt1.Add(ElementParameterFilter(xFamName2))\n\n\nicolbeamcolumnfilt1=List[ElementFilter](beamcolumnfilt1)\nandbeamcolumnfilt1=LogicalOrFilter(icolbeamcolumnfilt1)\n##Now make an ICollection of the “Magnum” tests and the previous AND of “Blue”+“Steel”, then use that ICollection to construct an OR filter set.\n\n\n##Now construct a ParameterFilterElement called “ZoolanderBeamsColumns” using the previously defined beam and column category ICollection and the OR ElementParameterFilter.\ntry:\n\tif IN[4] == True:\n\t\tpfebeamcolelem=ParameterFilterElement.Create(doc,IN[1],iCollBeamColumnCats,andbeamcolumnfilt1)\n\t\tTransactionManager.Instance.TransactionTaskDone()\n\t\tOUT = \"Filter \" + IN[1] +  \" has been successfully created\"\n\telse: OUT = \"feed TRUE to IN[4]\"\n\t\nexcept: \n\n\tOUT = \"Filter \" + IN[1] +  \" already exists\"\n\t\n",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
       "Id": "e5845ccc1f264c88ae3d67f899c3f1b7",
@@ -469,11 +469,11 @@
     {
       "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
       "NodeType": "CodeBlockNode",
-      "Code": "\"Sections (\"+x+\")\";",
+      "Code": "\"(\"+x+\")\";",
       "Id": "b12204e25ee74eb8a3892a87827a815e",
       "Inputs": [
         {
-          "Id": "3b5891166f0c4ffdac6e3feb917d5572",
+          "Id": "8aa6f77281614bc4b2df2cefc85f3645",
           "Name": "x",
           "Description": "x",
           "UsingDefaultValue": false,
@@ -484,7 +484,7 @@
       ],
       "Outputs": [
         {
-          "Id": "8a7baebb1d914facb2c37435c422e9b9",
+          "Id": "09eca31a8a904d5398288239ffacbc2c",
           "Name": "",
           "Description": "Value of expression at line 1",
           "UsingDefaultValue": false,
@@ -608,7 +608,7 @@
       "ConcreteType": "Dynamo.Nodes.DSModelElementSelection, DSRevitNodesUI",
       "NodeType": "ExtensionNode",
       "InstanceId": [
-        "9b223495-4ac8-4dcb-ab06-676527563646-00ac385e"
+        "21e00065-b7e5-436c-b50c-5b570b931633-0080d55e"
       ],
       "Id": "f1e854f540c7436a873d3a1b4944b13f",
       "Inputs": [],
@@ -648,7 +648,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "#This script pops up a dialog box with a message from the previous node.\r\nimport clr\r\nclr.AddReference('RevitAPIUI')\r\n\r\nfrom Autodesk.Revit.UI import TaskDialog\r\n\r\n\r\nmainText = IN[0]\r\n\r\nif mainText != None and mainText != \"null\"  :\r\n\tmessagePop = TaskDialog(\"Dynamo Player\")\r\n\tmessagePop.MainContent = mainText\r\n\t\r\n\tOUT = \"Success!\"\r\n\t\r\n\tmessagePop.Show()",
+      "Code": "#This script pops up a dialog box with a message from the previous node.\r\nimport clr\r\nclr.AddReference('RevitAPIUI')\r\n\r\nfrom Autodesk.Revit.UI import TaskDialog\r\n\r\n\r\nmainText = IN[0]\r\n\r\nif mainText != None and mainText != \"null\"  :\r\n\tmessagePop = TaskDialog(\"Dynamo Player\")\r\n\tmessagePop.MainContent = mainText\r\n\t\r\n\tOUT = \"Success!\"\r\n\t\r\n\tmessagePop.Show()\r\nelse:\r\n\tmessagePop = TaskDialog(\"Dynamo Player\")\r\n\tmessagePop.MainContent = \"Select proper type (section or viewport)\"\r\n\t\r\n\tOUT = \"Success!\"\r\n\t\r\n\tmessagePop.Show()\t",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
       "Id": "d3ef94c3db9f46888ed04021b748303d",
@@ -701,8 +701,8 @@
     },
     {
       "Start": "db7e7aebdb614eacbac5ad512307f08d",
-      "End": "fb8cddd507214a4e8ecd0ba012a78411",
-      "Id": "73fcc4d2179e4b7fade16ba4f9e46787"
+      "End": "654d1bf467374015bb291ac862d38d04",
+      "Id": "d5873c236f1048e08f124be145c1c3db"
     },
     {
       "Start": "68431271a70f4fb6a30af471e4f3d7dc",
@@ -716,8 +716,8 @@
     },
     {
       "Start": "22830af0b1464fb090b9cd4bb91c6b89",
-      "End": "3b5891166f0c4ffdac6e3feb917d5572",
-      "Id": "6dd9aebee763438b8d4f9fcc016b994f"
+      "End": "8aa6f77281614bc4b2df2cefc85f3645",
+      "Id": "9a9e4fc25d6e40d6b4acb795537713da"
     },
     {
       "Start": "9de96cf70b4042dfb46c832317a920e4",
@@ -750,9 +750,9 @@
       "Id": "ffa611d48b4b4ddaa36c62f3bb0573e6"
     },
     {
-      "Start": "8a7baebb1d914facb2c37435c422e9b9",
-      "End": "654d1bf467374015bb291ac862d38d04",
-      "Id": "62cd8d7e4be04a2886d4222b781d82be"
+      "Start": "09eca31a8a904d5398288239ffacbc2c",
+      "End": "fb8cddd507214a4e8ecd0ba012a78411",
+      "Id": "3971659ed0104ae5a110b54f92cd2015"
     },
     {
       "Start": "04d59861cc0342e79bd13038b0514229",
@@ -807,8 +807,8 @@
         "Name": "views ",
         "ShowGeometry": true,
         "Excluded": false,
-        "X": 1018.5165187027709,
-        "Y": 747.98647550070007
+        "X": 986.90044589425372,
+        "Y": 762.03806341559641
       },
       {
         "Id": "ad95a4845a554719b9149046f52b0901",
@@ -974,11 +974,11 @@
         "Id": "41438ad560374e309fecf50a9b2f294a",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
-        "Name": "List Create",
+        "Name": "for 2 filters, atm need only 1",
         "ShowGeometry": true,
         "Excluded": false,
-        "X": 2203.3946178091674,
-        "Y": 707.722658219436
+        "X": 2187.0922532302279,
+        "Y": 662.30892832096242
       },
       {
         "Id": "48e909b6c9d645d5be62fcf56bbdd139",
@@ -1032,8 +1032,8 @@
       }
     ],
     "Annotations": [],
-    "X": -2048.2835344559794,
-    "Y": -291.75605756133547,
-    "Zoom": 0.863578302798034
+    "X": -1293.5633584826821,
+    "Y": -296.52710078339589,
+    "Zoom": 0.85877112686379053
   }
 }

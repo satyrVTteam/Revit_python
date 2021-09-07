@@ -9,18 +9,17 @@
 "Category_White", 
 "Rev.Clouds_Override",
 "Element_Transp",
-"Linetype",
 "Template_Remove",
 "View_last_on_Sheet",
 "View_Open1",
 "View_last_template",
-"Open_ext_ref",
 "Family_DELETE",
 "Viewport_MOVE",
-"View_Crop",
 "View_DELETE",
 "Purge",
-"View_Open_L0_Floor"
+"View_x_Filter_Create",
+"Category_Sections_toggle",
+"Template_Apply_from_other"
 
 
 ]   
