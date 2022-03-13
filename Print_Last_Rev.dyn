@@ -363,7 +363,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "k = list(set(IN[0]))\r\ny = []\r\nfor i in k:\r\n\tx = i[6:8]+i[3:5]+i[0:2]\r\n\ty.append(x)\r\n\r\n\r\nc = zip(y, k)\r\n\r\nf = sorted(c)\r\n#strange way to get second element from every sublist\r\nOUT = [element for _, element in f]",
+      "Code": "k = list(set(IN[0]))\r\ny = []\r\n\r\nif len(k[0])<9:\r\n\tfor i in k:\r\n\t\tx = i[6:8]+i[3:5]+i[0:2]\r\n\t\ty.append(x)\r\n\r\nelse:\r\n\tfor i in k:\r\n\t\tx = i[6:10]+i[3:5]+i[0:2]\r\n\t\ty.append(x)\r\n\t\r\n\t\r\nc = zip(y, k)\r\n\r\nf = sorted(c)\r\n#strange way to get second element from every sublist\r\nOUT = [element for _, element in f]",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
       "Id": "c2ff82429bd241d1b06be971e931c0e1",
@@ -673,7 +673,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nimport os\r\nimport subprocess\r\n\r\n#clr.AddReference('ProtoGeometry')\r\n#from Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\n#dataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\n\r\ntxt1 = IN[0]\r\n\r\n#txt1 = 'C:\\1.txt'\r\nbool = IN[1]\r\n\r\n\r\n#SPath = r'C:\\Windows\\System32\\notepad.exe'\r\n\r\n\r\ntry:\r\n\tif bool:\r\n\t\tsubprocess.Popen([IN[2], txt1])\r\n\t\tOUT = 'success'\r\n\r\n\t\t\r\nexcept:\r\n\tif bool:\r\n\t\tsubprocess.Popen([IN[3], txt1])\r\n\t\tOUT = 'success'\r\n\r\n\r\n#subprocess.Popen('explorer \"C:\\temp\"') #itWorks!\r\n# Assign your output to the OUT variable.\r\n",
+      "Code": "# Load the Python Standard and DesignScript Libraries\r\nimport sys\r\nimport clr\r\nimport os\r\nimport subprocess\r\n\r\n#clr.AddReference('ProtoGeometry')\r\n#from Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\n#dataEnteringNode = IN\r\n\r\n# Place your code below this line\r\n\r\n\r\ntxt1 = IN[0]\r\n\r\n#txt1 = 'C:\\1.txt'\r\nbool = IN[1]\r\n\r\n\r\n#SPath = r'C:\\Windows\\System32\\notepad.exe'\r\n\r\n\r\ntry:\r\n\tif bool:\r\n\t\tsubprocess.Popen([IN[2], txt1])\r\n\t\tOUT = 'success'\r\n\r\n\t\t\r\nexcept:\r\n\ttry:\r\n\t\tif bool:\r\n\t\t\tsubprocess.Popen([IN[3], txt1])\r\n\t\t\tOUT = 'success'\r\n\texcept:\r\n\t\tif bool:\r\n\t\t\tsubprocess.Popen([IN[4], txt1])\r\n\t\t\tOUT = 'success'\r\n\r\n\r\n#subprocess.Popen('explorer \"C:\\temp\"') #itWorks!\r\n# Assign your output to the OUT variable.\r\n",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
       "Id": "2126af720eec4a80851389c0ffcc3f2d",
@@ -709,6 +709,15 @@
           "Id": "ac330031ed204b4fb32715e22ea0e354",
           "Name": "IN[3]",
           "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1ea2d17f19fc4fa4ba7d3c7ab0e6995c",
+          "Name": "IN[4]",
+          "Description": "Input #4",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -1061,6 +1070,26 @@
       ],
       "Replication": "Disabled",
       "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "C:\\Program Files (x86)\\Adobe\\Acrobat 10.0\\Acrobat\\Acrobat.exe",
+      "Id": "05a8ebab6f354300bf22c8bee40b6e32",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "75c866eb1d814b00846fba402d11e75d",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates a string."
     }
   ],
   "Connectors": [
@@ -1166,13 +1195,13 @@
     },
     {
       "Start": "72960c8d1a0043edbcfdff6db3b85c73",
-      "End": "ac330031ed204b4fb32715e22ea0e354",
-      "Id": "e3870e8c5454491f8ba35aa83ff816ea"
+      "End": "1ea2d17f19fc4fa4ba7d3c7ab0e6995c",
+      "Id": "27c351747fc149949055382639f26602"
     },
     {
       "Start": "62c0dc635479432dbf53373833d182d3",
-      "End": "4d431461c8544123a4b9b90b8eddbcc4",
-      "Id": "9fc9eaf470914aee92b277f25f947a8a"
+      "End": "ac330031ed204b4fb32715e22ea0e354",
+      "Id": "bbbd11cbe85e4df08f9585ceba98ff4a"
     },
     {
       "Start": "39c165a603364bf5876314460bda8bac",
@@ -1253,6 +1282,11 @@
       "Start": "b17a4c55462049b194520deaa1d09ab6",
       "End": "ef08472bed7f4f6b96452f588ae762b3",
       "Id": "d21097aa6fae4320a761c3e92a21b926"
+    },
+    {
+      "Start": "75c866eb1d814b00846fba402d11e75d",
+      "End": "4d431461c8544123a4b9b90b8eddbcc4",
+      "Id": "3fccb015ef084017bedfe3ca68d52ba9"
     }
   ],
   "Dependencies": [],
@@ -1387,7 +1421,7 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 1299.1467918897954,
+        "X": 1298.5844069837276,
         "Y": 812.19607976295538
       },
       {
@@ -1457,8 +1491,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 4532.433508968883,
-        "Y": 1046.5454990140302
+        "X": 4557.8771610956856,
+        "Y": 1172.6329306646294
       },
       {
         "ShowGeometry": true,
@@ -1467,8 +1501,8 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 4539.8082468247321,
-        "Y": 966.76518607389016
+        "X": 4565.2518989515347,
+        "Y": 1092.8526177244894
       },
       {
         "ShowGeometry": true,
@@ -1537,7 +1571,7 @@
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 4569.6419951589123,
+        "X": 4568.139294094286,
         "Y": 849.64137571561014
       },
       {
@@ -1589,11 +1623,21 @@
         "Excluded": false,
         "X": 2646.3179743360888,
         "Y": 422.9340263618314
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "String",
+        "Id": "05a8ebab6f354300bf22c8bee40b6e32",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 4560.9123016372978,
+        "Y": 996.78155456852
       }
     ],
     "Annotations": [],
-    "X": -3080.7326625140868,
-    "Y": -299.05486174076009,
-    "Zoom": 0.89091757952469508
+    "X": -5716.9808183523119,
+    "Y": -784.76937434523916,
+    "Zoom": 1.6329064675170197
   }
 }
