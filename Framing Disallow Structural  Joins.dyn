@@ -1,0 +1,288 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Framing Disallow Structural  Joins",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "70e2fbe45ab342ce8a271859fe2ec36c",
+      "Name": "Disallow",
+      "Type": "boolean",
+      "Value": "true",
+      "Description": "Selection between a true and false."
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "70e2fbe45ab342ce8a271859fe2ec36c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8c6a062938d24c65acbac957a9b01417",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Selection between a true and false."
+    },
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [
+        "0cdebdcc-fe58-4eba-ad49-c90bc5b57419-0152b4f9",
+        "0cdebdcc-fe58-4eba-ad49-c90bc5b57419-0152b4fb"
+      ],
+      "Id": "d558a689f34d4c00957f15b28fd7477d",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8d95a3b036d14e23a018d9d971466b91",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Logic.If, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "945f46148d19409299aa4d0a18315ce9",
+      "Inputs": [
+        {
+          "Id": "9d0b3df85e0f4b9c83f66684dddd68df",
+          "Name": "test",
+          "Description": "Boolean test",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "bf9e7a32039b46278751a627e4c94a08",
+          "Name": "true",
+          "Description": "Returned if test is true",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "242f3f1557f64914a0c18a18be2c6d71",
+          "Name": "false",
+          "Description": "Returned if test is false",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "a94961940d3f443cba7c30bb893f06a1",
+          "Name": "result",
+          "Description": "Result block produced",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Conditional statement"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Disallowed\";\n\"Allowed\";",
+      "Id": "eb78b7dab5ff4705b3b47356168ecb19",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4565760a993542b995e16ba491a5d4f1",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "1ebbe9aa4af141f08c46524722e02b6c",
+          "Name": "",
+          "Description": "Value of expression at line 2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# This node has been made by Modelical\r\n# www.modelical.com\r\n\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n#Load Dynamo wrappers\r\nclr.AddReference(\"RevitNodes\")\r\nimport Revit\r\nfrom Revit.Elements import *\r\nclr.ImportExtensions(Revit.GeometryConversion)\r\nclr.ImportExtensions(Revit.Elements)\r\n\r\n#Load Revit API\r\nclr.AddReference('RevitAPI')\r\nfrom Autodesk.Revit.DB import *\r\nfrom Autodesk.Revit.DB.Structure import *\r\nimport Autodesk\r\n\r\n#Load document reference\r\nclr.AddReference(\"RevitServices\")\r\nimport RevitServices\r\nfrom RevitServices.Persistence import DocumentManager\r\nfrom RevitServices.Transactions import TransactionManager\r\n\r\ndoc = DocumentManager.Instance.CurrentDBDocument\r\nuiapp = DocumentManager.Instance.CurrentUIApplication\r\napp = uiapp.Application\r\n\r\ndef toList(input):\r\n\tif isinstance(input,list) == False:\r\n\t\treturn [input]\r\n\telse:\r\n\t\treturn input\r\n\r\ndef flatten(x):\r\n    result = []\r\n    for el in x:\r\n        if hasattr(el, \"__iter__\") and not isinstance(el, basestring):\r\n            result.extend(flatten(el))\r\n        else:\r\n            result.append(el)\r\n    return result\r\n\r\nstrFraming = flatten(toList(UnwrapElement(IN[0])))\r\ndisallowed = IN[1]\r\n\r\nif disallowed:\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\tfor strF in strFraming:\r\n\t\tStructuralFramingUtils.DisallowJoinAtEnd(strF,0)\r\n\t\tStructuralFramingUtils.DisallowJoinAtEnd(strF,1)\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\n\r\nelse:\r\n\tTransactionManager.Instance.EnsureInTransaction(doc)\r\n\tfor strF in strFraming:\r\n\t\tStructuralFramingUtils.AllowJoinAtEnd(strF,0)\r\n\t\tStructuralFramingUtils.AllowJoinAtEnd(strF,1)\r\n\tTransactionManager.Instance.TransactionTaskDone()\r\n\r\nOUT = strFraming",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "246cffd88bbb4ff4a0364b61a7aed2b4",
+      "Inputs": [
+        {
+          "Id": "f46703cb057d48669fa62b9ea85e7b67",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5bb38027623b4695ba667b13538b4b02",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c2879fc508a34e5dbb94b21e2d8431dc",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "8c6a062938d24c65acbac957a9b01417",
+      "End": "9d0b3df85e0f4b9c83f66684dddd68df",
+      "Id": "67317d6ab1c84333b5aa208e7a1068c4"
+    },
+    {
+      "Start": "8c6a062938d24c65acbac957a9b01417",
+      "End": "5bb38027623b4695ba667b13538b4b02",
+      "Id": "a9d5a66470f7468e92637288790a556c"
+    },
+    {
+      "Start": "8d95a3b036d14e23a018d9d971466b91",
+      "End": "f46703cb057d48669fa62b9ea85e7b67",
+      "Id": "e3f7a31d0a6542429126fb207c45524d"
+    },
+    {
+      "Start": "4565760a993542b995e16ba491a5d4f1",
+      "End": "bf9e7a32039b46278751a627e4c94a08",
+      "Id": "996fcae7c5584ecbb30c63452919490a"
+    },
+    {
+      "Start": "1ebbe9aa4af141f08c46524722e02b6c",
+      "End": "242f3f1557f64914a0c18a18be2c6d71",
+      "Id": "69aa73538e7b4d789ceec6a8df5e2403"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.10.1.3976",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "NodeViews": [
+      {
+        "Id": "70e2fbe45ab342ce8a271859fe2ec36c",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Name": "Disallow",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 582.619442355365,
+        "Y": 657.17298771064884
+      },
+      {
+        "Id": "d558a689f34d4c00957f15b28fd7477d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Select Model Elements",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 318.7194186740237,
+        "Y": 518.5385813203244
+      },
+      {
+        "Id": "945f46148d19409299aa4d0a18315ce9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "If",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 868.8398357771066,
+        "Y": 721.188064892765
+      },
+      {
+        "Id": "eb78b7dab5ff4705b3b47356168ecb19",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Code Block",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 583.30205689414765,
+        "Y": 806.87583883278023
+      },
+      {
+        "Id": "246cffd88bbb4ff4a0364b61a7aed2b4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Python Script",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 874.30264750060769,
+        "Y": 540.13002454747755
+      }
+    ],
+    "Annotations": [],
+    "X": 4.4978350023277471,
+    "Y": -105.08557979486557,
+    "Zoom": 0.81355597918438427
+  }
+}

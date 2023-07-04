@@ -1352,7 +1352,7 @@
       "ConcreteType": "Dynamo.Nodes.DSModelElementSelection, DSRevitNodesUI",
       "NodeType": "ExtensionNode",
       "InstanceId": [
-        "31579115-1ff5-4b48-b6ac-64b142f6050f-00d6c1d1"
+        "a8c3aa73-98b4-446d-9e6b-899e55940cc8-00e15210"
       ],
       "Id": "e8ec90dc2e6d4410addb4f258b3da160",
       "Inputs": [],
@@ -1940,12 +1940,8 @@
       "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
       "NodeType": "ExtensionNode",
       "InstanceId": [
-        "31579115-1ff5-4b48-b6ac-64b142f6050f-00d6c1cb",
-        "31579115-1ff5-4b48-b6ac-64b142f6050f-00d6c1cd",
-        "31579115-1ff5-4b48-b6ac-64b142f6050f-00d6c1cf",
-        "31579115-1ff5-4b48-b6ac-64b142f6050f-00d6c1d3",
-        "31579115-1ff5-4b48-b6ac-64b142f6050f-00d6c1d5",
-        "31579115-1ff5-4b48-b6ac-64b142f6050f-00d6c1d7"
+        "a8c3aa73-98b4-446d-9e6b-899e55940cc8-00e14bcb",
+        "a8c3aa73-98b4-446d-9e6b-899e55940cc8-00e14e19"
       ],
       "Id": "b0d940dd5469484e825ea70d73560d65",
       "Inputs": [],
@@ -1961,6 +1957,123 @@
         }
       ],
       "Replication": "Disabled"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Flatten@var[]..[],int",
+      "Id": "d1653f3208104626b7c2839b1d06ecbe",
+      "Inputs": [
+        {
+          "Id": "8349f09cd183414ab3d3ed75b1333f4f",
+          "Name": "list",
+          "Description": "List to flatten.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "3638b4d7bc934951bc0dba74fbaea4cb",
+          "Name": "amt",
+          "Description": "Layers of nesting to remove.\n\nint\nDefault value : -1",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "afa80b90a489400184b7b27314dfd2be",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Flattens a nested list of lists by a certain amount.\n\nList.Flatten (list: var[]..[], amt: int = -1): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Flatten@var[]..[],int",
+      "Id": "39d6164031984f14855258805380f7a8",
+      "Inputs": [
+        {
+          "Id": "39b3ee4478c84bbc976fbf0fdb5b2491",
+          "Name": "list",
+          "Description": "List to flatten.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "53128b1f69df480c9295f1bf7dbdf05a",
+          "Name": "amt",
+          "Description": "Layers of nesting to remove.\n\nint\nDefault value : -1",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "880b5e753c114d1c8b3927d93ffb665e",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Flattens a nested list of lists by a certain amount.\n\nList.Flatten (list: var[]..[], amt: int = -1): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Flatten@var[]..[],int",
+      "Id": "4e53448234974e20972587d0d773b404",
+      "Inputs": [
+        {
+          "Id": "cee436ff86f345cabca6313261773a94",
+          "Name": "list",
+          "Description": "List to flatten.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4f3f98095fbd43018995e358345e88dd",
+          "Name": "amt",
+          "Description": "Layers of nesting to remove.\n\nint\nDefault value : -1",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "5b1bcb7b756f432d968239d586188402",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Flattens a nested list of lists by a certain amount.\n\nList.Flatten (list: var[]..[], amt: int = -1): var[]..[]"
     }
   ],
   "Connectors": [
@@ -2281,18 +2394,18 @@
     },
     {
       "Start": "4f19a3545296464bbb3067adc1efa14a",
-      "End": "e3d1ac1357664818abc9c98befbfab62",
-      "Id": "ae6d597d819449188d87ba6da904e4d2"
+      "End": "39b3ee4478c84bbc976fbf0fdb5b2491",
+      "Id": "eabc1a2c946b4972b531630d56e3751b"
     },
     {
       "Start": "faca31020bcd47a1af0b6a5f667b1d5a",
-      "End": "a9c6f627af28492a82c0d744e9b7c930",
-      "Id": "d1611136906544179871a6beae6163e8"
+      "End": "cee436ff86f345cabca6313261773a94",
+      "Id": "41a0567f78db49a8a005287a0fcf4bb0"
     },
     {
       "Start": "965f78f431214bce829eff0478dcbc5f",
-      "End": "7229ec67ac744d57a0721a2764d231ad",
-      "Id": "02dfb10c80f34ba09800216b8f92a6fa"
+      "End": "8349f09cd183414ab3d3ed75b1333f4f",
+      "Id": "fd0a4bcda7914988a6cf17dbfc31676a"
     },
     {
       "Start": "3bbea512123e4824847aff565e722233",
@@ -2342,17 +2455,32 @@
     {
       "Start": "cd862a7ceb104ff792281c4385d58a20",
       "End": "2dad1e4c7e6e416a947126372569d1a8",
-      "Id": "7ef99f4c403e482c9cccce8d831139c7"
+      "Id": "6f7ed268f04e45c4a8c91e064d7d3d6b"
     },
     {
       "Start": "cd862a7ceb104ff792281c4385d58a20",
       "End": "fedd6ba016724e37a82716d4a688137b",
-      "Id": "d7972d83faf1497990978333c79412ed"
+      "Id": "80d27cec5f4a48a58d4bc091c719a5a3"
     },
     {
       "Start": "cd862a7ceb104ff792281c4385d58a20",
       "End": "e514219f337349b6b2779f1f32f79788",
-      "Id": "0f92e1a5e055412995d22368b78fb0cb"
+      "Id": "ad43a6b8149b4629a259c93d3eddc503"
+    },
+    {
+      "Start": "afa80b90a489400184b7b27314dfd2be",
+      "End": "7229ec67ac744d57a0721a2764d231ad",
+      "Id": "cf55eb42142641f9b174fc656cc93042"
+    },
+    {
+      "Start": "880b5e753c114d1c8b3927d93ffb665e",
+      "End": "e3d1ac1357664818abc9c98befbfab62",
+      "Id": "ec24f372e6ff4ebea77ec54d9a848d09"
+    },
+    {
+      "Start": "5b1bcb7b756f432d968239d586188402",
+      "End": "a9c6f627af28492a82c0d744e9b7c930",
+      "Id": "0b23182135d74decba736092d916a4a8"
     }
   ],
   "Dependencies": [],
@@ -2797,8 +2925,8 @@
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": -3250.96476231687,
-        "Y": 366.69696500528687
+        "X": -3538.3594091695463,
+        "Y": 364.51179684123451
       },
       {
         "ShowGeometry": true,
@@ -2962,13 +3090,43 @@
       },
       {
         "ShowGeometry": true,
-        "Name": "Select Model Elements",
+        "Name": "Elements to align",
         "Id": "b0d940dd5469484e825ea70d73560d65",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": -3650.89175463201,
+        "Y": 148.15176383823706
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.Flatten",
+        "Id": "d1653f3208104626b7c2839b1d06ecbe",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 213.32817311559023,
-        "Y": -341.93367045675859
+        "X": 1544.7637273140022,
+        "Y": -11.767719740986195
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.Flatten",
+        "Id": "39d6164031984f14855258805380f7a8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1552.7822102994694,
+        "Y": 104.9048005243626
+      },
+      {
+        "ShowGeometry": true,
+        "Name": "List.Flatten",
+        "Id": "4e53448234974e20972587d0d773b404",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 1553.5403541560477,
+        "Y": 228.48224914659232
       }
     ],
     "Annotations": [
@@ -3073,8 +3231,8 @@
         "Background": "#FFC1D676"
       }
     ],
-    "X": 425.61080155960224,
-    "Y": 230.37913879275038,
-    "Zoom": 0.5406812594836875
+    "X": 1218.3153654536829,
+    "Y": 449.65809699387751,
+    "Zoom": 0.34121469546119187
   }
 }
